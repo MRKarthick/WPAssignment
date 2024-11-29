@@ -2,7 +2,7 @@
 //  WPAssignmentApp.swift
 //  WPAssignment
 //
-//  Created by EdgeCaseDesigns on 29/11/24.
+//  Created by Karthick Mannarkudi Ramesh Kumar on 29/11/24.
 //
 
 import SwiftUI
@@ -12,7 +12,7 @@ import SwiftData
 struct WPAssignmentApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            CardListView()
         }
     }
 }
