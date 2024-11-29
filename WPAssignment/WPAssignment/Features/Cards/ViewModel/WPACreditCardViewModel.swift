@@ -35,6 +35,6 @@ class WPACreditCardViewModel: ObservableObject {
     }
     
     func groupCards(by type: String) -> [WPACreditCardDTO] {
-        cards.filter { $0.credit_card_type == type }
+        cards.filter { $0.ccType == type }
     }
 }

@@ -11,11 +11,11 @@ struct WPACardDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Credit Card Number: \(creditCard.credit_card_number)")
+            Text("Credit Card Number: \(creditCard.ccNumber)")
                 .font(.headline)
-            Text("Expiry Date: \(creditCard.credit_card_expiry_date)")
+            Text("Expiry Date: \(creditCard.ccExpiryDate)")
                 .font(.subheadline)
-            Text("Card Type: \(creditCard.credit_card_type)")
+            Text("Card Type: \(creditCard.ccType)")
                 .font(.subheadline)
         }
         .padding()
@@ -27,11 +27,7 @@ struct WPACardDetailView: View {
 struct WPACardDetailView_Previews: PreviewProvider {
     static var previews: some View {
         WPACardDetailView(creditCard: WPACreditCardDTO(
-            id: 1,
-            uid: "12345",
-            credit_card_number: "1234 5678 9012 3456",
-            credit_card_expiry_date: "12/24",
-            credit_card_type: "Visa"
+            ccId: 1, ccUid: "12345", ccNumber: "1234 5678 9012 3456", ccExpiryDate: "12/24", ccType: "Visa"
         ))
     }
 }

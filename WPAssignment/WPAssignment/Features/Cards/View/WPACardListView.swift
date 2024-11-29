@@ -21,7 +21,7 @@ struct WPACardListView: View {
                 } else {
                     List(viewModel.cards) { card in
                         NavigationLink(destination: WPACardDetailView(creditCard: card)) {
-                            Text("\(card.credit_card_type): \(card.credit_card_number)")
+                            Text("\(card.ccType): \(card.ccNumber)")
                         }
                     }
                 }
