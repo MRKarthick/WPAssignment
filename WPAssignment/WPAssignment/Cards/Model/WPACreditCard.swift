@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class CreditCard: Decodable {
+final class WPACreditCard: Decodable {
     var id: UInt64
     var uid: String
     var credit_card_number: String

@@ -7,10 +7,10 @@
 
 import Foundation
 
-class CreditCardService {
-    static let shared = CreditCardService()
+class WPACreditCardService {
+    static let shared = WPACreditCardService()
     
-    func fetchCards(completion: @escaping (Result<[CreditCard], Error>) -> Void) {
+    func fetchCards(completion: @escaping (Result<[WPACreditCard], Error>) -> Void) {
         guard let url = URL(string: "https://random-data-api.com/api/v2/credit_cards?size=100") else {
             completion(.failure(APIError.invalidURL))
             return
@@ -28,7 +28,7 @@ class CreditCardService {
             }
             
             do {
-                let cards = try JSONDecoder().decode([CreditCard].self, from: data)
+                let cards = try JSONDecoder().decode([WPACreditCard].self, from: data)
                 completion(.success(cards))
             } catch {
                 completion(.failure(error))

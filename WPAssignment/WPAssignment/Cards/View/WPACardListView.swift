@@ -8,8 +8,8 @@
 import SwiftUI
 import SwiftData
 
-struct CardListView: View {
-    @StateObject private var viewModel = CreditCardViewModel()
+struct WPACardListView: View {
+    @StateObject private var viewModel = WPACreditCardViewModel()
     
     var body: some View {
         NavigationView {
@@ -20,7 +20,7 @@ struct CardListView: View {
                     Text("Error: \(errorMessage)")
                 } else {
                     List(viewModel.cards) { card in
-                        NavigationLink(destination: CardDetailView(creditCard: card)) {
+                        NavigationLink(destination: WPACardDetailView(creditCard: card)) {
                             Text("\(card.credit_card_type): \(card.credit_card_number)")
                         }
                     }
@@ -35,5 +35,5 @@ struct CardListView: View {
 }
 
 #Preview {
-    CardListView()
+    WPACardListView()
 }

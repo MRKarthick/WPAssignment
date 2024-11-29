@@ -8,15 +8,15 @@
 import SwiftUI
 import SwiftData
 
-class CreditCardViewModel: ObservableObject {
-    @Published var cards: [CreditCard] = []
+class WPACreditCardViewModel: ObservableObject {
+    @Published var cards: [WPACreditCard] = []
     @Published var errorMessage: String? = nil
     @Published var isLoading: Bool = false
     @Environment(\.modelContext) var modelContext
     
     func fetchCards() {
         isLoading = true
-        CreditCardService.shared.fetchCards { [weak self] result in
+        WPACreditCardService.shared.fetchCards { [weak self] result in
             DispatchQueue.main.async {
                 self?.isLoading = false
                 switch result {
@@ -29,12 +29,12 @@ class CreditCardViewModel: ObservableObject {
         }
     }
     
-    func bookmark(card: CreditCard) {
+    func bookmark(card: WPACreditCard) {
         // card.isBookmarked.toggle()
         // modelContext.saveIfNeeded()
     }
     
-    func groupCards(by type: String) -> [CreditCard] {
+    func groupCards(by type: String) -> [WPACreditCard] {
         cards.filter { $0.credit_card_type == type }
     }
 }

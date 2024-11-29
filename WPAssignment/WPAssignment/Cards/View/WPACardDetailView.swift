@@ -6,8 +6,8 @@
 //
 import SwiftUI
 
-struct CardDetailView: View {
-    let creditCard: CreditCard
+struct WPACardDetailView: View {
+    let creditCard: WPACreditCard
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -24,9 +24,9 @@ struct CardDetailView: View {
 }
 
 // Sample Preview
-struct CardDetailView_Previews: PreviewProvider {
+struct WPACardDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        CardDetailView(creditCard: CreditCard(
+        WPACardDetailView(creditCard: WPACreditCard(
             id: 1,
             uid: "12345",
             credit_card_number: "1234 5678 9012 3456",
