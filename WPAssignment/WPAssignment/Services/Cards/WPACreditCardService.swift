@@ -13,7 +13,7 @@ class WPACreditCardService {
     static let shared = WPACreditCardService()
     private let apiService = WPAService()
     
-    func fetchCards(completion: @escaping (Result<[WPACreditCard], Error>) -> Void) {
+    func fetchCards(completion: @escaping (Result<[WPACreditCardDTO], Error>) -> Void) {
         let urlString = "\(WPACreditCardService.kRandomAPIV2URL)?size=100"
         print("urlString is \(urlString)")
         apiService.fetchData(from: urlString, completion: completion)

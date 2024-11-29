@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct WPACardDetailView: View {
-    let creditCard: WPACreditCard
+    let creditCard: WPACreditCardDTO
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -26,7 +26,7 @@ struct WPACardDetailView: View {
 // Sample Preview
 struct WPACardDetailView_Previews: PreviewProvider {
     static var previews: some View {
-        WPACardDetailView(creditCard: WPACreditCard(
+        WPACardDetailView(creditCard: WPACreditCardDTO(
             id: 1,
             uid: "12345",
             credit_card_number: "1234 5678 9012 3456",
