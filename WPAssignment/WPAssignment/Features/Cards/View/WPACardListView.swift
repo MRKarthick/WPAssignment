@@ -23,21 +23,7 @@ struct WPACardListView: View {
                         ForEach(viewModel.groupedCards, id: \.0) { type, cards in
                             Section(header: Text(type)) {
                                 ForEach(cards) { card in
-                                    NavigationLink(destination: WPACardDetailView(creditCard: card)) {
-                                        HStack {
-                                            VStack(alignment: .leading) {
-                                                Text("Card No:  \(card.ccNumber)")
-                                                Text("Exp Date: \(card.ccExpiryDate)")
-                                            }
-                                            Spacer()
-                                            Button(action: {
-                                                // Add your bookmark action here
-                                            }) {
-                                                Image(systemName: "bookmark")
-                                                    .foregroundColor(.blue)
-                                            }
-                                        }
-                                    }
+                                    WPACardItemView(card: card)
                                 }
                             }
                         }
@@ -52,6 +38,15 @@ struct WPACardListView: View {
                 viewModel.fetchCards()
             }
         }
+    }
+    
+    func getCardImage(_ card: WPACreditCardDTO) -> String {
+        if card.isBookmarked {
+            print("Bookmarked")
+        } else {
+            print("Not Bookmarked")
+        }
+        return card.isBookmarked ? "bookmark.fill" : "bookmark"
     }
 }
 

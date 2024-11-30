@@ -13,6 +13,7 @@ final class WPACreditCardDTO: Identifiable {
     var ccNumber: String
     var ccExpiryDate: String
     var ccType: String
+    var isBookmarked: Bool = false
     
     init(ccId: UInt64, ccUid: String, ccNumber: String, ccExpiryDate: String, ccType: String) {
         self.id = ccId
