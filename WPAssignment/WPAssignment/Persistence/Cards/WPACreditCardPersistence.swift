@@ -19,7 +19,7 @@ class WPACreditCardPersistence {
         do {
             self.modelContainer = try ModelContainer(for: WPACreditCardEntity.self)
         } catch {
-            fatalError("Failed to initialize ModelContainer: \(error)")
+            fatalError("Failed to initialize WPACreditCardPersistence ModelContainer: \(error)")
         }
     }
     
@@ -30,7 +30,7 @@ class WPACreditCardPersistence {
         do {
             try context.save()
         } catch {
-            debugPrint("Failed to save credit card: \(error)")
+            debugPrint("WPACreditCardPersistence: Failed to save credit card: \(error)")
         }
     }
     
@@ -43,12 +43,12 @@ class WPACreditCardPersistence {
             let creditCards = try context.fetch(fetchRequest)
             return creditCards
         } catch {
-            debugPrint("Failed to fetch credit cards: \(error)")
+            debugPrint("WPACreditCardPersistence: Failed to fetch credit cards: \(error)")
             return []
         }
     }
     
-    @MainActor func deleteAllCreditCards() {
+    @MainActor func deleteAllCreditCards(excludingBookmarks: Bool = true) {
         let context = modelContainer.mainContext
         
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>()
@@ -58,7 +58,21 @@ class WPACreditCardPersistence {
             creditCards.forEach { context.delete($0) }
             try context.save()
         } catch {
-            debugPrint("Failed to delete all credit cards: \(error)")
+            debugPrint("WPACreditCardPersistence: Failed to delete all credit cards: \(error)")
+        }
+    }
+
+    @MainActor func fetchCreditCard(byUid ccUid: String) -> WPACreditCardEntity? {
+        let context = modelContainer.mainContext
+        
+        let fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { $0.ccUid == ccUid })
+        
+        do {
+            let creditCards = try context.fetch(fetchRequest)
+            return creditCards.first
+        } catch {
+            debugPrint("WPACreditCardPersistence: Failed to fetch credit card with UID \(ccUid): \(error)")
+            return nil
         }
     }
 }
