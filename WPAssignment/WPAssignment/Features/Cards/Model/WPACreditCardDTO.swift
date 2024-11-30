@@ -25,5 +25,9 @@ final class WPACreditCardDTO: Identifiable {
     class func getDTOfrom(_ model: WPACreditCardModel) -> WPACreditCardDTO {
         return WPACreditCardDTO(ccId: model.id, ccUid: model.uid, ccNumber: model.creditCardNumber, ccExpiryDate: model.creditCardExpirydate, ccType: model.creditCardType)
     }
+    
+    class func getDTOfrom(_ entity: WPACreditCardEntity) -> WPACreditCardDTO {
+        return WPACreditCardDTO(ccId: entity.id, ccUid: entity.ccUid, ccNumber: entity.ccNumber, ccExpiryDate: entity.ccExpiryDate, ccType: entity.ccType)
+    }
 }
 

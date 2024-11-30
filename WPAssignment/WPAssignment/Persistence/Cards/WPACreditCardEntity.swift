@@ -24,8 +24,8 @@ final class WPACreditCardEntity {
         self.ccType = ccType
     }
     
-    class func getDTOfrom(_ model: WPACreditCardModel) -> WPACreditCardDTO {
-        return WPACreditCardDTO(ccId: model.id, ccUid: model.uid, ccNumber: model.creditCardNumber, ccExpiryDate: model.creditCardExpirydate, ccType: model.creditCardType)
+    class func getDTOfrom(_ model: WPACreditCardModel) -> WPACreditCardEntity {
+        return WPACreditCardEntity(ccId: model.id, ccUid: model.uid, ccNumber: model.creditCardNumber, ccExpiryDate: model.creditCardExpirydate, ccType: model.creditCardType)
     }
 }
 
