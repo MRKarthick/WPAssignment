@@ -14,7 +14,18 @@ class WPACreditCardService {
     static let shared = WPACreditCardService()
     private let apiService = WPAService()
     
-    func fetchCards(completion: @escaping (Result<[WPACreditCardDTO], Error>) -> Void) {
+    func fetchCards(completion: @escaping (Result<[WPACreditCardDTO], Error>) -> Void, isForceFetch: Bool = false) {
+        guard isForceFetch else {
+            Task { @MainActor in
+                let creditCards = WPACreditCardPersistence.shared.fetchCreditCards()
+                let modelDTOs = creditCards.map { model in
+                    return WPACreditCardDTO.getDTOfrom(model)
+                }
+                completion(.success(modelDTOs))
+            }
+            return
+        }
+        
         let urlString = "\(WPACreditCardService.kRandomAPIV2URL)?size=100"
         apiService.fetchData(from: urlString) { (result: Result<[WPACreditCardModel], Error>) in
             switch result {
@@ -23,7 +34,7 @@ class WPACreditCardService {
                     return WPACreditCardDTO.getDTOfrom(model)
                 }
                 Task { @MainActor in
-                    self.persistRetrieveAndPrint(models)
+                    self.persistCreditCardDetails(models)
                 }
                 completion(.success(modelDTO))
             case .failure(let error):
@@ -32,7 +43,7 @@ class WPACreditCardService {
         }
     }
     
-    @MainActor func persistRetrieveAndPrint(_ models: [WPACreditCardModel]) {
+    @MainActor func persistCreditCardDetails(_ models: [WPACreditCardModel]) {
         for model in models {
             let entity = WPACreditCardEntity.getDTOfrom(model)
             WPACreditCardPersistence.shared.saveCard(entity)

@@ -12,7 +12,7 @@ class WPACreditCardViewModel: ObservableObject {
     @Published var cardsDto: [WPACreditCardDTO] = []
     @Published var errorMessage: String? = nil
     @Published var isLoading: Bool = false
-    
+        
     func fetchCards() {
         isLoading = true
         WPACreditCardService.shared.fetchCards { [weak self] result in

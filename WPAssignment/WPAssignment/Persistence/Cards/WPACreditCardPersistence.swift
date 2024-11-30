@@ -29,9 +29,22 @@ class WPACreditCardPersistence {
         
         do {
             try context.save()
-            debugPrint("Saved")
         } catch {
             debugPrint("Failed to save credit card: \(error)")
+        }
+    }
+    
+    @MainActor func fetchCreditCards() -> [WPACreditCardEntity] {
+        let context = modelContainer.mainContext
+        
+        let fetchRequest = FetchDescriptor<WPACreditCardEntity>()
+        
+        do {
+            let creditCards = try context.fetch(fetchRequest)
+            return creditCards
+        } catch {
+            debugPrint("Failed to fetch credit cards: \(error)")
+            return []
         }
     }
 }
