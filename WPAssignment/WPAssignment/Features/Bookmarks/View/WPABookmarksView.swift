@@ -6,3 +6,19 @@
 //
 
 import Foundation
+import SwiftUI
+
+struct WPABookmarksView: View {
+    @StateObject private var viewModel = WPABookmarksViewModel()
+    
+    var body: some View {
+        Text("Bookmarks View")
+    }
+}
+
+#Preview {
+    WPABookmarksView()
+}
+
+
+
