@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 class WPACreditCardService {
-    static let kRandomAPIV2URL: String = "\(WPAURLConstants.kRandomAPIV2URL)/credit_cards"
+    static let kCreditCardsURL: String = "\(WPAURLConstants.kRandomAPIV2URL)/credit_cards"
     
     static let shared = WPACreditCardService()
     private let apiService = WPAService()
@@ -30,7 +30,7 @@ class WPACreditCardService {
             return
         }
         
-        let urlString = "\(WPACreditCardService.kRandomAPIV2URL)?size=100"
+        let urlString = "\(WPACreditCardService.kCreditCardsURL)?size=100"
         apiService.fetchData(from: urlString) { (result: Result<[WPACreditCardModel], Error>) in
             switch result {
             case .success(let models):
