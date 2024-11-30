@@ -17,9 +17,13 @@ class WPACreditCardService {
     func fetchCards(completion: @escaping (Result<[WPACreditCardDTO], Error>) -> Void, isForceFetch: Bool = false) {
         guard isForceFetch else {
             Task { @MainActor in
-                let creditCards = WPACreditCardPersistence.shared.fetchCreditCards()
+                let creditCards: [WPACreditCardEntity] = WPACreditCardPersistence.shared.fetchCreditCards()
                 let modelDTOs = creditCards.map { model in
                     return WPACreditCardDTO.getDTOfrom(model)
+                }
+                
+                if modelDTOs.isEmpty {
+                    fetchCards(completion: completion, isForceFetch: true)
                 }
                 completion(.success(modelDTOs))
             }
@@ -34,7 +38,7 @@ class WPACreditCardService {
                     return WPACreditCardDTO.getDTOfrom(model)
                 }
                 Task { @MainActor in
-                    self.persistCreditCardDetails(models)
+                    self.persistCreditCardDetails(models, deleteExistingData: isForceFetch)
                 }
                 completion(.success(modelDTO))
             case .failure(let error):
@@ -43,7 +47,11 @@ class WPACreditCardService {
         }
     }
     
-    @MainActor func persistCreditCardDetails(_ models: [WPACreditCardModel]) {
+    @MainActor func persistCreditCardDetails(_ models: [WPACreditCardModel], deleteExistingData: Bool = true) {
+        if deleteExistingData {
+            WPACreditCardPersistence.shared.deleteAllCreditCards()
+        }
+        
         for model in models {
             let entity = WPACreditCardEntity.getDTOfrom(model)
             WPACreditCardPersistence.shared.saveCard(entity)

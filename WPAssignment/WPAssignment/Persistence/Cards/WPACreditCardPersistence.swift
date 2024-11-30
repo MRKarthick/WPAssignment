@@ -47,4 +47,18 @@ class WPACreditCardPersistence {
             return []
         }
     }
+    
+    @MainActor func deleteAllCreditCards() {
+        let context = modelContainer.mainContext
+        
+        let fetchRequest = FetchDescriptor<WPACreditCardEntity>()
+        
+        do {
+            let creditCards = try context.fetch(fetchRequest)
+            creditCards.forEach { context.delete($0) }
+            try context.save()
+        } catch {
+            debugPrint("Failed to delete all credit cards: \(error)")
+        }
+    }
 }
