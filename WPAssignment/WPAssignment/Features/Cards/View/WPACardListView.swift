@@ -24,9 +24,18 @@ struct WPACardListView: View {
                             Section(header: Text(type)) {
                                 ForEach(cards) { card in
                                     NavigationLink(destination: WPACardDetailView(creditCard: card)) {
-                                        VStack(alignment: .leading) {
-                                            Text("Card No:  \(card.ccNumber)")
-                                            Text("Exp Date: \(card.ccExpiryDate)")
+                                        HStack {
+                                            VStack(alignment: .leading) {
+                                                Text("Card No:  \(card.ccNumber)")
+                                                Text("Exp Date: \(card.ccExpiryDate)")
+                                            }
+                                            Spacer()
+                                            Button(action: {
+                                                // Add your bookmark action here
+                                            }) {
+                                                Image(systemName: "bookmark")
+                                                    .foregroundColor(.blue)
+                                            }
                                         }
                                     }
                                 }

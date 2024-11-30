@@ -34,8 +34,4 @@ class WPACreditCardViewModel: ObservableObject {
         // card.isBookmarked.toggle()
         // modelContext.saveIfNeeded()
     }
-    
-    func groupCards(by type: String) -> [WPACreditCardDTO] {
-        return cardsDto.filter { $0.ccType == type }
-    }
 }
