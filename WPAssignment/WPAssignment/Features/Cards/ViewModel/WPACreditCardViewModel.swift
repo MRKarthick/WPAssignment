@@ -13,9 +13,10 @@ class WPACreditCardViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var isLoading: Bool = false
         
-    func fetchCards() {
+    func fetchCards(isForceFetch: Bool = false) {
         isLoading = true
-        WPACreditCardService.shared.fetchCards { [weak self] result in
+        
+        WPACreditCardService.shared.fetchCards(completion: { [weak self] result in
             DispatchQueue.main.async {
                 self?.isLoading = false
                 switch result {
@@ -25,7 +26,7 @@ class WPACreditCardViewModel: ObservableObject {
                     self?.errorMessage = error.localizedDescription
                 }
             }
-        }
+        }, isForceFetch: isForceFetch)
     }
     
     func bookmark(card: WPACreditCardDTO) {

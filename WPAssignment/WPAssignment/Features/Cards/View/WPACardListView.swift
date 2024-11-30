@@ -24,6 +24,9 @@ struct WPACardListView: View {
                             Text("\(card.ccType): \(card.ccNumber)")
                         }
                     }
+                    .refreshable {
+                        viewModel.fetchCards(isForceFetch: true)
+                    }
                 }
             }
             .navigationTitle("Credit Cards")
