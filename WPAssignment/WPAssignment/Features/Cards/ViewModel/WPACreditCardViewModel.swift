@@ -9,10 +9,9 @@ import SwiftUI
 import SwiftData
 
 class WPACreditCardViewModel: ObservableObject {
-    @Published var cards: [WPACreditCardDTO] = []
+    @Published var cardsDto: [WPACreditCardDTO] = []
     @Published var errorMessage: String? = nil
     @Published var isLoading: Bool = false
-    @Environment(\.modelContext) var modelContext
     
     func fetchCards() {
         isLoading = true
@@ -21,7 +20,7 @@ class WPACreditCardViewModel: ObservableObject {
                 self?.isLoading = false
                 switch result {
                 case .success(let fetchedCards):
-                    self?.cards = fetchedCards
+                    self?.cardsDto = fetchedCards
                 case .failure(let error):
                     self?.errorMessage = error.localizedDescription
                 }
@@ -35,6 +34,6 @@ class WPACreditCardViewModel: ObservableObject {
     }
     
     func groupCards(by type: String) -> [WPACreditCardDTO] {
-        cards.filter { $0.ccType == type }
+        return cardsDto.filter { $0.ccType == type }
     }
 }

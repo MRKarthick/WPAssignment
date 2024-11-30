@@ -19,7 +19,7 @@ struct WPACardListView: View {
                 } else if let errorMessage = viewModel.errorMessage {
                     Text("Error: \(errorMessage)")
                 } else {
-                    List(viewModel.cards) { card in
+                    List(viewModel.cardsDto) { card in
                         NavigationLink(destination: WPACardDetailView(creditCard: card)) {
                             Text("\(card.ccType): \(card.ccNumber)")
                         }

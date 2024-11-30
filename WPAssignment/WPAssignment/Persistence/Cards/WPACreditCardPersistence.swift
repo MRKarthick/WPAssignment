@@ -12,8 +12,6 @@ import _SwiftData_SwiftUI
 
 class WPACreditCardPersistence {
     private let modelContainer: ModelContainer
-
-    @Query private var creditCards: [WPACreditCardEntity]
     
     static let shared = WPACreditCardPersistence()
     
@@ -31,12 +29,9 @@ class WPACreditCardPersistence {
         
         do {
             try context.save()
+            debugPrint("Saved")
         } catch {
             debugPrint("Failed to save credit card: \(error)")
         }
-    }
-    
-    func retrieveCreditCards() -> [WPACreditCardEntity] {
-        return creditCards
     }
 }

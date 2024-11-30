@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftData
 
 class WPACreditCardService {
     static let kRandomAPIV2URL: String = "\(WPAURLConstants.kRandomAPIV2URL)/credit_cards"
@@ -21,10 +22,20 @@ class WPACreditCardService {
                 let modelDTO = models.map { model in
                     return WPACreditCardDTO.getDTOfrom(model)
                 }
+                Task { @MainActor in
+                    self.persistRetrieveAndPrint(models)
+                }
                 completion(.success(modelDTO))
             case .failure(let error):
                 completion(.failure(error))
             }
+        }
+    }
+    
+    @MainActor func persistRetrieveAndPrint(_ models: [WPACreditCardModel]) {
+        for model in models {
+            let entity = WPACreditCardEntity.getDTOfrom(model)
+            WPACreditCardPersistence.shared.saveCard(entity)
         }
     }
 }
