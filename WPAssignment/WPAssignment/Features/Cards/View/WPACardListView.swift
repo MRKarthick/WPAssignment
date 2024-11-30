@@ -19,9 +19,18 @@ struct WPACardListView: View {
                 } else if let errorMessage = viewModel.errorMessage {
                     Text("Error: \(errorMessage)")
                 } else {
-                    List(viewModel.cardsDto) { card in
-                        NavigationLink(destination: WPACardDetailView(creditCard: card)) {
-                            Text("\(card.ccType): \(card.ccNumber)")
+                    List {
+                        ForEach(viewModel.groupedCards, id: \.0) { type, cards in
+                            Section(header: Text(type)) {
+                                ForEach(cards) { card in
+                                    NavigationLink(destination: WPACardDetailView(creditCard: card)) {
+                                        VStack(alignment: .leading) {
+                                            Text("Card No:  \(card.ccNumber)")
+                                            Text("Exp Date: \(card.ccExpiryDate)")
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                     .refreshable {
