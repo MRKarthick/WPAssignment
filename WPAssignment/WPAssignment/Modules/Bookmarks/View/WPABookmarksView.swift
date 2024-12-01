@@ -2,7 +2,7 @@
 //  WPABookmarksView.swift
 //  WPAssignment
 //
-//  Created by EdgeCaseDesigns on 30/11/24.
+//  Created by Karthick Mannarkudi Ramesh Kumar on 30/11/24.
 //
 
 import Foundation

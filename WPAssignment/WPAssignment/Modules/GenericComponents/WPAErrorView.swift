@@ -2,7 +2,7 @@
 //  ErrorView.swift
 //  WPAssignment
 //
-//  Created by EdgeCaseDesigns on 01/12/24.
+//  Created by Karthick Mannarkudi Ramesh Kumar on 01/12/24.
 //
 
 import Foundation
