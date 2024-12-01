@@ -15,9 +15,9 @@ struct WPABookmarksView: View {
         NavigationView {
             VStack {
                 if viewModel.groupedBookmarks.isEmpty {
-                    Text(WPAGenericConstants.BookmarksPage.kEmptyBookmarksDescription)
+                    WPADefaultContentView(content: WPAGenericConstants.BookmarksPage.kEmptyBookmarksDescription)
                 } else if let errorMessage = viewModel.errorMessage {
-                    Text("\(WPAErrorConstants.kGenericErrorTitle): \(errorMessage)")
+                    WPAErrorView(errorMessage: "\(WPAErrorConstants.kGenericErrorTitle): \(errorMessage)")
                 } else {
                     List {
                         ForEach(viewModel.groupedBookmarks, id: \.0) { type, cards in

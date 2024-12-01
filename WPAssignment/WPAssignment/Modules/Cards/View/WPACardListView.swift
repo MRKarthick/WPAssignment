@@ -24,8 +24,8 @@ struct WPACardListView: View {
 
     @ViewBuilder
     private var contentView: some View {
-        if viewModel.isLoading {
-            ProgressView(WPAGenericConstants.CreditCardPage.kLoadingPlaceholderDescription)
+        if viewModel.groupedCards.isEmpty {
+            WPAProgressView(message: WPAGenericConstants.CreditCardPage.kLoadingPlaceholderDescription)
         } else if viewModel.errorMessage != nil {
             WPAErrorView(errorMessage: viewModel.errorMessage ?? "")
         } else {
@@ -41,7 +41,7 @@ struct WPACardListView: View {
                 }
             }
             .refreshable {
-                viewModel.fetchCards()
+                viewModel.fetchCards(isForceFetch: true)
             }
         }
     }
