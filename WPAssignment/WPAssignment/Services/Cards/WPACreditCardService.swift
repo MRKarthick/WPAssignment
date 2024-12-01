@@ -10,6 +10,7 @@ import Combine
 
 protocol WPACreditCardServiceProtocol {
     func fetchCards(isForceFetch: Bool) -> AnyPublisher<[WPACreditCardDTO], Error>
+    func fetchBookmarkedCards() -> AnyPublisher<[WPACreditCardDTO], Error>
     func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool)
 }
 

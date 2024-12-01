@@ -9,7 +9,11 @@ import XCTest
 import Combine
 @testable import WPAssignment
 
-class MockWPACreditCardService: WPACreditCardServiceProtocol {
+class WPAMockCreditCardService: WPACreditCardServiceProtocol {
+    func fetchBookmarkedCards() -> AnyPublisher<[WPAssignment.WPACreditCardDTO], any Error> {
+        return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
+    }
+    
     var fetchCardsResult: Result<[WPACreditCardDTO], Error> = .success([])
     var updateBookmarkCalled = false
     
@@ -24,12 +28,12 @@ class MockWPACreditCardService: WPACreditCardServiceProtocol {
 
 class WPACreditCardViewModelTests: XCTestCase {
     var viewModel: WPACreditCardViewModel!
-    var mockService: MockWPACreditCardService!
+    var mockService: WPAMockCreditCardService!
     var cancellables: Set<AnyCancellable>!
     
     override func setUp() {
         super.setUp()
-        mockService = MockWPACreditCardService()
+        mockService = WPAMockCreditCardService()
         viewModel = WPACreditCardViewModel(cardService: mockService)
         cancellables = []
     }

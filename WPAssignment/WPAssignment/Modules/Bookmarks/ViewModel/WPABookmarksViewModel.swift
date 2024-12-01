@@ -13,9 +13,14 @@ class WPABookmarksViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     
     private var cancellables = Set<AnyCancellable>()
+    private let creditCardService: WPACreditCardServiceProtocol
+    
+    init(creditCardService: WPACreditCardServiceProtocol = WPACreditCardService.shared) {
+        self.creditCardService = creditCardService
+    }
     
     func fetchBookmarkedCards() {
-        WPACreditCardService.shared.fetchBookmarkedCards()
+        creditCardService.fetchBookmarkedCards()
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {
