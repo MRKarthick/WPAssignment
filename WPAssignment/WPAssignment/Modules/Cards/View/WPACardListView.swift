@@ -27,7 +27,7 @@ struct WPACardListView: View {
         if viewModel.isLoading {
             ProgressView(WPAGenericConstants.CreditCardPage.kLoadingPlaceholderDescription)
         } else if viewModel.errorMessage != nil {
-            ErrorView(errorMessage: viewModel.errorMessage ?? "")
+            WPAErrorView(errorMessage: viewModel.errorMessage ?? "")
         } else {
             List {
                 ForEach(viewModel.groupedCards, id: \.0) { type, cards in

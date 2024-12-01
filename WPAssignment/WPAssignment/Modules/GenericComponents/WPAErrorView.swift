@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct ErrorView: View {
+struct WPAErrorView: View {
     let errorMessage: String
 
     var body: some View {

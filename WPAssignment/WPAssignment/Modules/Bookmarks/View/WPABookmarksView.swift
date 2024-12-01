@@ -15,7 +15,7 @@ struct WPABookmarksView: View {
         NavigationView {
             VStack {
                 if viewModel.groupedBookmarks.isEmpty {
-                    ProgressView(WPAGenericConstants.BookmarksPage.kEmptyBookmarksDescription)
+                    Text(WPAGenericConstants.BookmarksPage.kEmptyBookmarksDescription)
                 } else if let errorMessage = viewModel.errorMessage {
                     Text("\(WPAErrorConstants.kGenericErrorTitle): \(errorMessage)")
                 } else {
