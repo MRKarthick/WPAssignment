@@ -30,7 +30,7 @@ struct WPABookmarksView: View {
                     }
                 }
             }
-            .navigationTitle("Boomarks")
+            .navigationTitle("Bookmarks")
             .onAppear {
                 viewModel.fetchBookmarkedCards()
             }

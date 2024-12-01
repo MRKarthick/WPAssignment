@@ -30,7 +30,7 @@ class WPACreditCardViewModel: ObservableObject {
         }, isForceFetch: isForceFetch)
     }
     
-    func bookmark(card: WPACreditCardDTO) {
-        WPACreditCardService.shared.bookmarkCreditCard(ccUid: card.ccUid)
+    func toggleBookmark(card: WPACreditCardDTO) {
+        WPACreditCardService.shared.updateBookmark(forCardWithCcUid: card.ccUid, withValue: !card.isBookmarked)
     }
 }

@@ -24,7 +24,7 @@ struct WPACardListView: View {
                                 Section(header: Text(type)) {
                                     ForEach(cards) { card in
                                         WPACardItemView(card: card) {
-                                            viewModel.bookmark(card: card)
+                                            viewModel.toggleBookmark(card: card)
                                         }
                                     }
                                 }

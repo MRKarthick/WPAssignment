@@ -68,14 +68,14 @@ class WPACreditCardPersistence {
         }
     }
     
-    @MainActor func bookmarkCreditCard(with ccUid: String) {
+    @MainActor func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) {
         let context = modelContainer.mainContext
         
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { $0.ccUid == ccUid })
         
         do {
             if let creditCard = try context.fetch(fetchRequest).first {
-                creditCard.isBookmarked = true
+                creditCard.isBookmarked = isBookmarked
                 try context.save()
             } else {
                 debugPrint("WPACreditCardPersistence: No credit card found with ccUid: \(ccUid)")

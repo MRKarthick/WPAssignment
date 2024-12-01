@@ -15,9 +15,9 @@ class WPACreditCardService {
     private let apiService = WPAService()
     
     // Currently there is no API to persist bookmark in Backend. So the service layer here just persists in SQLite DB
-    func bookmarkCreditCard(ccUid: String) {
+    func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) {
         Task { @MainActor in
-            WPACreditCardPersistence.shared.bookmarkCreditCard(with: ccUid)
+            WPACreditCardPersistence.shared.updateBookmark(forCardWithCcUid: ccUid, withValue: isBookmarked)
         }
     }
     
