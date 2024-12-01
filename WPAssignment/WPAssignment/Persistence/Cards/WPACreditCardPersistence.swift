@@ -23,6 +23,11 @@ class WPACreditCardPersistence {
         }
     }
     
+    // Initializer for testing and preview purposes
+    init(container: ModelContainer) {
+        self.modelContainer = container
+    }
+    
     @MainActor func saveCard(_ creditCard: WPACreditCardEntity) {
         let context = modelContainer.mainContext
         context.insert(creditCard)
@@ -36,12 +41,10 @@ class WPACreditCardPersistence {
     
     @MainActor func fetchCreditCards() -> [WPACreditCardEntity] {
         let context = modelContainer.mainContext
-        
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>()
         
         do {
-            let creditCards = try context.fetch(fetchRequest)
-            return creditCards
+            return try context.fetch(fetchRequest)
         } catch {
             debugPrint("WPACreditCardPersistence: Failed to fetch credit cards: \(error)")
             return []
@@ -70,7 +73,6 @@ class WPACreditCardPersistence {
     
     @MainActor func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) {
         let context = modelContainer.mainContext
-        
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { $0.ccUid == ccUid })
         
         do {
@@ -87,15 +89,30 @@ class WPACreditCardPersistence {
     
     @MainActor func fetchBookmarkedCreditCards() -> [WPACreditCardEntity] {
         let context = modelContainer.mainContext
-        
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { $0.isBookmarked })
         
         do {
-            let bookmarkedCreditCards = try context.fetch(fetchRequest)
-            return bookmarkedCreditCards
+            return try context.fetch(fetchRequest)
         } catch {
             debugPrint("WPACreditCardPersistence: Failed to fetch Bookmarked credit cards: \(error)")
             return []
+        }
+    }
+}
+
+extension ModelContainer {
+    // Creates a temporary in-memory ModelContainer for testing and preview use
+    @MainActor static func temporary(entities: any PersistentModel.Type, withMockData mockData: [any PersistentModel] = []) -> ModelContainer {
+        do {
+            let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
+            let container = try ModelContainer(for: entities, configurations: configuration)
+            let context = container.mainContext
+
+            mockData.forEach { context.insert($0) }
+            try context.save()
+            return container
+        } catch {
+            fatalError("Failed to initialize temporary ModelContainer: \(error)")
         }
     }
 }

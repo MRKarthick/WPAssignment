@@ -24,9 +24,10 @@ final class WPACreditCardEntity {
         self.ccExpiryDate = ccExpiryDate
         self.ccType = ccType
     }
-    
-    class func getDTOfrom(_ model: WPACreditCardModel) -> WPACreditCardEntity {
+}
+
+extension WPACreditCardEntity {
+    static func getDTOfrom(_ model: WPACreditCardModel) -> WPACreditCardEntity {
         return WPACreditCardEntity(ccId: model.id, ccUid: model.uid, ccNumber: model.creditCardNumber, ccExpiryDate: model.creditCardExpirydate, ccType: model.creditCardType)
     }
 }
-
