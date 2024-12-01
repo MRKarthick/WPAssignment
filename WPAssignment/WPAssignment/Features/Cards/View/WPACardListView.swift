@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct WPACardListView: View {
     @StateObject private var viewModel = WPACreditCardViewModel()
@@ -45,7 +44,7 @@ struct WPACardListView: View {
                 Label("Credit Cards", systemImage: "creditcard")
             }
             
-            Text("Bookmarks View")
+            WPABookmarksView()
                 .tabItem {
                     Label("Bookmarks", systemImage: "bookmark")
                 }

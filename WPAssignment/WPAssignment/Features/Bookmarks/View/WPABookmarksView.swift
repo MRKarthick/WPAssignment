@@ -12,7 +12,29 @@ struct WPABookmarksView: View {
     @StateObject private var viewModel = WPABookmarksViewModel()
     
     var body: some View {
-        Text("Bookmarks View")
+        NavigationView {
+            VStack {
+                if viewModel.groupedBookmarks.isEmpty {
+                    ProgressView("There are no bookmarks.")
+                } else if let errorMessage = viewModel.errorMessage {
+                    Text("Error: \(errorMessage)")
+                } else {
+                    List {
+                        ForEach(viewModel.groupedBookmarks, id: \.0) { type, cards in
+                            Section(header: Text(type)) {
+                                ForEach(cards) { card in
+                                    WPACardItemView(card: card)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Boomarks")
+            .onAppear {
+                viewModel.fetchBookmarkedCards()
+            }
+        }
     }
 }
 

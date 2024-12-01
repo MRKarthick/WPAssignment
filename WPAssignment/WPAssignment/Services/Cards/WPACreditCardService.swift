@@ -20,6 +20,17 @@ class WPACreditCardService {
             WPACreditCardPersistence.shared.bookmarkCreditCard(with: ccUid)
         }
     }
+    
+    // Currently there is no API to fetch bookmark from Backend. So the service layer here just retrieves it from SQLite DB
+    func fetchBookmarkedCards(completion: @escaping (Result<[WPACreditCardDTO], Error>) -> Void) {
+        Task { @MainActor in
+            let creditCards: [WPACreditCardEntity] = WPACreditCardPersistence.shared.fetchBookmarkedCreditCards()
+            let modelDTOs = creditCards.map { model in
+                return WPACreditCardDTO.getDTOfrom(model)
+            }
+            completion(.success(modelDTOs))
+        }
+    }
 
     func fetchCards(completion: @escaping (Result<[WPACreditCardDTO], Error>) -> Void, isForceFetch: Bool = false) {
         guard isForceFetch else {
