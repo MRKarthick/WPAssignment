@@ -27,7 +27,7 @@ class WPABookmarksViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {
-                    self?.errorMessage = "Failed to fetch bookmarks: \(error.localizedDescription)"
+                    self?.errorMessage = "\(WPAErrorConstants.kFailedBookmarksErrorTitle): \(error.localizedDescription)"
                 }
             }, receiveValue: { [weak self] fetchedCards in
                 // Process and store the fetched cards
