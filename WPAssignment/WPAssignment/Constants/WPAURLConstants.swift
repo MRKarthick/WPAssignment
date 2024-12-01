@@ -7,7 +7,7 @@
 
 import Foundation
 
-class WPAURLConstants {
+struct WPAURLConstants {
     static let kBaseRandomAPIURL: String = "https://random-data-api.com"
     static let kRandomAPIV2URL: String = "\(kBaseRandomAPIURL)/api/v2"
 }

@@ -15,9 +15,9 @@ struct WPACardListView: View {
             NavigationView {
                 VStack {
                     if viewModel.isLoading {
-                        ProgressView("Loading...")
+                        ProgressView(WPAGenericConstants.CreditCardPage.kLoadingPlaceholderDescription)
                     } else if let errorMessage = viewModel.errorMessage {
-                        Text("Error: \(errorMessage)")
+                        Text("\(WPAErrorConstants.kGenericErrorTitle): \(errorMessage)")
                     } else {
                         List {
                             ForEach(viewModel.groupedCards, id: \.0) { type, cards in
@@ -35,18 +35,18 @@ struct WPACardListView: View {
                         }
                     }
                 }
-                .navigationTitle("Credit Cards")
+                .navigationTitle(WPAGenericConstants.TabBar.kCreditCardTabTitle)
                 .onAppear {
                     viewModel.fetchCards()
                 }
             }
             .tabItem {
-                Label("Credit Cards", systemImage: "creditcard")
+                Label(WPAGenericConstants.TabBar.kCreditCardTabTitle, systemImage: WPAGenericConstants.TabBar.kCreditCardImageName)
             }
             
             WPABookmarksView()
                 .tabItem {
-                    Label("Bookmarks", systemImage: "bookmark")
+                    Label(WPAGenericConstants.TabBar.kBookmarksTabTitle, systemImage: WPAGenericConstants.TabBar.kBookmarkImageName)
                 }
         }
     }

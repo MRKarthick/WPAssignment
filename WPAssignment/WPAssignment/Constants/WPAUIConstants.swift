@@ -6,3 +6,7 @@
 //
 
 import Foundation
+
+struct WPAUIConstants {
+    static let kPaddingBetweenElements: CGFloat = 16
+}

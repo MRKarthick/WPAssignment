@@ -15,9 +15,9 @@ struct WPABookmarksView: View {
         NavigationView {
             VStack {
                 if viewModel.groupedBookmarks.isEmpty {
-                    ProgressView("There are no bookmarks.")
+                    ProgressView(WPAGenericConstants.BookmarksPage.kEmptyBookmarksDescription)
                 } else if let errorMessage = viewModel.errorMessage {
-                    Text("Error: \(errorMessage)")
+                    Text("\(WPAErrorConstants.kGenericErrorTitle): \(errorMessage)")
                 } else {
                     List {
                         ForEach(viewModel.groupedBookmarks, id: \.0) { type, cards in
@@ -30,7 +30,7 @@ struct WPABookmarksView: View {
                     }
                 }
             }
-            .navigationTitle("Bookmarks")
+            .navigationTitle(WPAGenericConstants.TabBar.kBookmarksTabTitle)
             .onAppear {
                 viewModel.fetchBookmarkedCards()
             }

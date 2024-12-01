@@ -22,8 +22,8 @@ struct WPACardItemView: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                Text("Card No:  \(card.ccNumber)")
-                Text("Exp Date: \(card.ccExpiryDate)")
+                Text("\(WPAGenericConstants.CreditCardItem.kCreditCardNumberTitle):  \(card.ccNumber)")
+                Text("\(WPAGenericConstants.CreditCardItem.kCreditCardExpiryTitle): \(card.ccExpiryDate)")
             }
             if onBookmarkToggle != nil {
                 Spacer()
@@ -31,11 +31,15 @@ struct WPACardItemView: View {
                     isBookmarked.toggle()
                     onBookmarkToggle!()
                 }) {
-                    Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
+                    Image(systemName: getBookmarkImageName())
                         .foregroundColor(.blue)
                 }
                 .buttonStyle(PlainButtonStyle())
             }
         }
+    }
+    
+    private func getBookmarkImageName() -> String {
+        return isBookmarked ? WPAGenericConstants.CreditCardItem.kBookmarkFillImageName : WPAGenericConstants.TabBar.kBookmarkImageName
     }
 }
