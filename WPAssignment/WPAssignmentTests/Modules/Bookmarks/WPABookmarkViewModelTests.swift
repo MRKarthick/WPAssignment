@@ -12,7 +12,7 @@ import Combine
 class WPAMockCreditCardService_Bookmark: WPACreditCardServiceProtocol {
     var fetchBookmarkedCardsResult: Result<[WPACreditCardDTO], Error> = .success([])
     
-    func fetchCards(isForceFetch: Bool) -> AnyPublisher<[WPACreditCardDTO], Error> {
+    func fetchCards(isForceFetch: Bool, size: Int) -> AnyPublisher<[WPACreditCardDTO], Error> {
         return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
     }
     

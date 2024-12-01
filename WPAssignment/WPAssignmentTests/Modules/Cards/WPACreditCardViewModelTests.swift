@@ -10,14 +10,14 @@ import Combine
 @testable import WPAssignment
 
 class WPAMockCreditCardService: WPACreditCardServiceProtocol {
+    var fetchCardsResult: Result<[WPACreditCardDTO], Error> = .success([])
+    var updateBookmarkCalled = false
+    
     func fetchBookmarkedCards() -> AnyPublisher<[WPAssignment.WPACreditCardDTO], any Error> {
         return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
     }
     
-    var fetchCardsResult: Result<[WPACreditCardDTO], Error> = .success([])
-    var updateBookmarkCalled = false
-    
-    func fetchCards(isForceFetch: Bool) -> AnyPublisher<[WPACreditCardDTO], Error> {
+    func fetchCards(isForceFetch: Bool, size: Int) -> AnyPublisher<[WPACreditCardDTO], Error> {
         return fetchCardsResult.publisher.eraseToAnyPublisher()
     }
     

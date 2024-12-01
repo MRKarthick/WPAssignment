@@ -10,6 +10,8 @@ import SwiftData
 import Combine
 
 class WPACreditCardViewModel: ObservableObject {
+    static let kCardsSize: Int = 100
+    
     @Published var groupedCards: [(key: String, value: [WPACreditCardDTO])] = []
     @Published var cardsDto: [WPACreditCardDTO] = []
     @Published var errorMessage: String? = nil
@@ -24,7 +26,7 @@ class WPACreditCardViewModel: ObservableObject {
     
     // Fetches cards, optionally forcing a refresh
     func fetchCards(isForceFetch: Bool = false) {
-        cardService.fetchCards(isForceFetch: isForceFetch)
+        cardService.fetchCards(isForceFetch: isForceFetch, size: WPACreditCardViewModel.kCardsSize)
             .receive(on: DispatchQueue.main) // Ensure updates are on the main thread
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {

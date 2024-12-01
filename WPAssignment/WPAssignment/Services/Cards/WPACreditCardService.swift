@@ -10,12 +10,12 @@ import Combine
 
 // Protocol defining the service operations for credit cards
 protocol WPACreditCardServiceProtocol {
-    func fetchCards(isForceFetch: Bool) -> AnyPublisher<[WPACreditCardDTO], Error>
+    func fetchCards(isForceFetch: Bool, size: Int) -> AnyPublisher<[WPACreditCardDTO], Error>
     func fetchBookmarkedCards() -> AnyPublisher<[WPACreditCardDTO], Error>
     func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool)
 }
 
-class WPACreditCardService: WPACreditCardServiceProtocol {
+class WPACreditCardService: WPACreditCardServiceProtocol {    
     static let kCreditCardsURL: String = "\(WPAURLConstants.kRandomAPIV2URL)/credit_cards"
     
     static let shared = WPACreditCardService()
@@ -58,15 +58,15 @@ class WPACreditCardService: WPACreditCardServiceProtocol {
     }
     
     // Fetches all credit cards, optionally forcing a fetch from the API
-    func fetchCards(isForceFetch: Bool = false) -> AnyPublisher<[WPACreditCardDTO], Error> {
+    func fetchCards(isForceFetch: Bool = false, size: Int = 100) -> AnyPublisher<[WPACreditCardDTO], Error> {
         if isForceFetch {
-            let urlString = "\(WPACreditCardService.kCreditCardsURL)?size=100"
+            let urlString = "\(WPACreditCardService.kCreditCardsURL)?size=\(size)"
             return apiService.fetchData(from: urlString)
                 .flatMap { (models: [WPACreditCardModel]) -> AnyPublisher<[WPACreditCardDTO], Error> in
                     Task { @MainActor in
                         self.persistCreditCardDetails(models, deleteExistingData: isForceFetch)
                     }
-                    return self.fetchCards(isForceFetch: false)
+                    return self.fetchCards(isForceFetch: false, size: size)
                 }
                 .eraseToAnyPublisher()
         } else {
