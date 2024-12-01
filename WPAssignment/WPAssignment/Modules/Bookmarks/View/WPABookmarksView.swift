@@ -14,25 +14,30 @@ struct WPABookmarksView: View {
     var body: some View {
         NavigationView {
             VStack {
-                if viewModel.groupedBookmarks.isEmpty {
-                    WPADefaultContentView(content: WPAGenericConstants.BookmarksPage.kEmptyBookmarksDescription)
-                } else if let errorMessage = viewModel.errorMessage {
-                    WPAErrorView(errorMessage: "\(WPAErrorConstants.kGenericErrorTitle): \(errorMessage)")
-                } else {
-                    List {
-                        ForEach(viewModel.groupedBookmarks, id: \.0) { type, cards in
-                            Section(header: Text(type)) {
-                                ForEach(cards) { card in
-                                    WPACardItemView(card: card)
-                                }
-                            }
-                        }
-                    }
-                }
+                contentView
             }
             .navigationTitle(WPAGenericConstants.TabBar.kBookmarksTabTitle)
             .onAppear {
                 viewModel.fetchBookmarkedCards()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var contentView: some View {
+        if viewModel.groupedBookmarks.isEmpty {
+            WPADefaultContentView(content: WPAGenericConstants.BookmarksPage.kEmptyBookmarksDescription)
+        } else if let errorMessage = viewModel.errorMessage {
+            WPAErrorView(errorMessage: "\(WPAErrorConstants.kGenericErrorTitle): \(errorMessage)")
+        } else {
+            List {
+                ForEach(viewModel.groupedBookmarks, id: \.0) { type, cards in
+                    Section(header: Text(type)) {
+                        ForEach(cards) { card in
+                            WPACardItemView(card: card)
+                        }
+                    }
+                }
             }
         }
     }
