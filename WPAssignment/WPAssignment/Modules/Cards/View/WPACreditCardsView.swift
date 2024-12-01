@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct WPACardListView: View {
+struct WPACreditCardsView: View {
     @StateObject private var viewModel = WPACreditCardViewModel()
 
     var body: some View {
@@ -48,5 +48,5 @@ struct WPACardListView: View {
 }
 
 #Preview {
-    WPACardListView()
+    WPACreditCardsView()
 }

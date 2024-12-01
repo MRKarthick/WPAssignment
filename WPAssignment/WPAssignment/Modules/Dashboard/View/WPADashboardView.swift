@@ -11,7 +11,7 @@ import SwiftUI
 struct WPADashboardView: View {
     var body: some View {
         TabView {
-            WPACardListView()
+            WPACreditCardsView()
                 .tabItem {
                     Label(WPAGenericConstants.TabBar.kCreditCardTabTitle, systemImage: WPAGenericConstants.TabBar.kCreditCardImageName)
                 }
@@ -24,6 +24,6 @@ struct WPADashboardView: View {
 }
 
 #Preview {
-    WPACardListView()
+    WPACreditCardsView()
 }
 
