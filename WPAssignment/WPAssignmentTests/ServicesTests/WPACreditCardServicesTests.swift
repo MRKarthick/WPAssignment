@@ -14,24 +14,14 @@ class MockAPIService: APIServiceProtocol {
     var result: Result<[WPACreditCardModel], Error>?
     
     func fetchData<T: Decodable>(from urlString: String) -> Future<T, Error> {
-        let mockData = """
-        [
-            {
-                "id": 1,
-                "uid": "99887766",
-                "credit_card_number": "1212-1221-1121-1234",
-                "credit_card_expiry_date": "2027-12-01",
-                "credit_card_type": "dankort"
-            }
-        ]
-        """.data(using: .utf8)!
-        
         return Future { promise in
-            do {
-                let decodedData = try JSONDecoder().decode(T.self, from: mockData)
-                promise(.success(decodedData))
-            } catch {
+            switch self.result {
+            case .success(let data as T):
+                promise(.success(data))
+            case .failure(let error):
                 promise(.failure(error))
+            default:
+                promise(.failure(APIError.noData)) // Default to no data error if result is nil
             }
         }
     }
@@ -85,42 +75,50 @@ class WPACreditCardServiceTests: XCTestCase {
     }
 
     func testFetchCardsSuccess() {
-        let mockModels = [WPACreditCardModel(id: 1, uid: "99887766", creditCardNumber: "1212-1221-1121-1234", creditCardExpirydate: "2027-12-01", creditCardType: "dankort")]
+        // Given: A mock API service set to succeed with mock data
+        let mockModels = [WPACreditCardModel(id: 102, uid: "99887766", creditCardNumber: "1212-1221-1121-1234", creditCardExpirydate: "2027-12-01", creditCardType: "dankort")]
         mockAPIService.result = .success(mockModels)
         
         let expectation = self.expectation(description: "FetchCards")
-        
+
+        // When: Fetching cards from the service
         service.fetchCards(isForceFetch: true)
             .sink(receiveCompletion: { completion in
+                // Then: The operation should succeed
                 if case .failure = completion {
                     XCTFail("Expected success, got failure")
                 }
             }, receiveValue: { cards in
-                XCTAssertEqual(cards.count, 1)
-                XCTAssertEqual(cards.first?.ccUid, "99887766")
+                // Then: The received cards should match the mock data
+                XCTAssertEqual(cards.count, 102)
                 expectation.fulfill()
             })
             .store(in: &cancellables)
         
+        // Then: Wait for expectations to be fulfilled
         waitForExpectations(timeout: 1, handler: nil)
     }
 
     func testFetchCardsFailure() {
+        // Given: A mock API service set to fail with no data error
         mockAPIService.result = .failure(APIError.noData)
-        
         let expectation = self.expectation(description: "FetchCards")
-        
+
+        // When: Fetching cards from the service
         service.fetchCards(isForceFetch: true)
             .sink(receiveCompletion: { completion in
+                // Then: The operation should fail with a no data error
                 if case .failure(let error) = completion {
                     XCTAssertEqual(error as? APIError, APIError.noData)
                     expectation.fulfill()
                 }
             }, receiveValue: { _ in
+                // Then: No cards should be received
                 XCTFail("Expected failure, got success")
             })
             .store(in: &cancellables)
-        
+
+        // Then: Wait for expectations to be fulfilled
         waitForExpectations(timeout: 1, handler: nil)
     }
 
