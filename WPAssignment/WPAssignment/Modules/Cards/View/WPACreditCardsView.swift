@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct WPACreditCardsView: View {
-    @StateObject private var viewModel = WPACreditCardViewModel()
+    @StateObject private var viewModel = WPACreditCardViewModel(cardService: WPACreditCardService.shared)
 
     var body: some View {
         NavigationView {

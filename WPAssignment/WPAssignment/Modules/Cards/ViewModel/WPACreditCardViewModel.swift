@@ -15,9 +15,14 @@ class WPACreditCardViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     
     private var cancellables = Set<AnyCancellable>()
+    private let cardService: WPACreditCardServiceProtocol
+    
+    init(cardService: WPACreditCardServiceProtocol = WPACreditCardService.shared) {
+        self.cardService = cardService
+    }
     
     func fetchCards(isForceFetch: Bool = false) {
-        WPACreditCardService.shared.fetchCards(isForceFetch: isForceFetch)
+        cardService.fetchCards(isForceFetch: isForceFetch)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {
@@ -30,6 +35,6 @@ class WPACreditCardViewModel: ObservableObject {
     }
     
     func toggleBookmark(card: WPACreditCardDTO) {
-        WPACreditCardService.shared.updateBookmark(forCardWithCcUid: card.ccUid, withValue: !card.isBookmarked)
+        cardService.updateBookmark(forCardWithCcUid: card.ccUid, withValue: !card.isBookmarked)
     }
 }

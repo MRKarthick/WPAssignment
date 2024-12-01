@@ -8,7 +8,12 @@
 import Foundation
 import Combine
 
-class WPACreditCardService {
+protocol WPACreditCardServiceProtocol {
+    func fetchCards(isForceFetch: Bool) -> AnyPublisher<[WPACreditCardDTO], Error>
+    func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool)
+}
+
+class WPACreditCardService: WPACreditCardServiceProtocol {
     static let kCreditCardsURL: String = "\(WPAURLConstants.kRandomAPIV2URL)/credit_cards"
     
     static let shared = WPACreditCardService()

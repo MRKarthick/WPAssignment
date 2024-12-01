@@ -7,7 +7,11 @@
 
 import Foundation
 
-final class WPACreditCardDTO: Identifiable {
+final class WPACreditCardDTO: Identifiable, Equatable {
+    static func == (lhs: WPACreditCardDTO, rhs: WPACreditCardDTO) -> Bool {
+        lhs.id == rhs.id && lhs.ccUid == rhs.ccUid && lhs.ccNumber == rhs.ccNumber && lhs.ccExpiryDate == rhs.ccExpiryDate && lhs.ccType == rhs.ccType
+    }
+    
     var id: UInt64
     var ccUid: String
     var ccNumber: String
