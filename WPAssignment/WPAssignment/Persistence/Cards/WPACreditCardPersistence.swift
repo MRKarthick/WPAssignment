@@ -10,6 +10,29 @@ import SwiftData
 import SwiftUICore
 import _SwiftData_SwiftUI
 
+enum CreditCardPersistenceError: Error {
+    case initializationFailed(String)
+    case saveFailed(Error)
+    case fetchFailed(Error)
+    case deleteFailed(Error)
+    case cardNotFound(String)
+    
+    var localizedDescription: String {
+        switch self {
+        case .initializationFailed(let message):
+            return "Initialization failed: \(message)"
+        case .saveFailed(let error):
+            return "Save failed: \(error.localizedDescription)"
+        case .fetchFailed(let error):
+            return "Fetch failed: \(error.localizedDescription)"
+        case .deleteFailed(let error):
+            return "Delete failed: \(error.localizedDescription)"
+        case .cardNotFound(let ccUid):
+            return "No credit card found with ccUid: \(ccUid)"
+        }
+    }
+}
+
 class WPACreditCardPersistence {
     private let modelContainer: ModelContainer
     
@@ -19,7 +42,7 @@ class WPACreditCardPersistence {
         do {
             self.modelContainer = try ModelContainer(for: WPACreditCardEntity.self)
         } catch {
-            fatalError("Failed to initialize WPACreditCardPersistence ModelContainer: \(error)")
+            fatalError(CreditCardPersistenceError.initializationFailed("\(error)").localizedDescription)
         }
     }
     
@@ -28,7 +51,7 @@ class WPACreditCardPersistence {
         self.modelContainer = container
     }
     
-    @MainActor func saveCard(_ creditCard: WPACreditCardEntity) -> Result<Void, Error> {
+    @MainActor func saveCard(_ creditCard: WPACreditCardEntity) -> Result<Void, CreditCardPersistenceError> {
         let context = modelContainer.mainContext
         context.insert(creditCard)
         
@@ -37,11 +60,11 @@ class WPACreditCardPersistence {
             return .success(())
         } catch {
             debugPrint("WPACreditCardPersistence: Failed to save credit card: \(error)")
-            return .failure(error)
+            return .failure(.saveFailed(error))
         }
     }
     
-    @MainActor func fetchCreditCards() -> Result<[WPACreditCardEntity], Error> {
+    @MainActor func fetchCreditCards() -> Result<[WPACreditCardEntity], CreditCardPersistenceError> {
         let context = modelContainer.mainContext
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>()
         
@@ -50,19 +73,13 @@ class WPACreditCardPersistence {
             return .success(cards)
         } catch {
             debugPrint("WPACreditCardPersistence: Failed to fetch credit cards: \(error)")
-            return .failure(error)
+            return .failure(.fetchFailed(error))
         }
     }
     
-    @MainActor func deleteAllCreditCards(excludingBookmarks: Bool = true) -> Result<Void, Error> {
+    @MainActor func deleteAllCreditCards(excludingBookmarks: Bool = true) -> Result<Void, CreditCardPersistenceError> {
         let context = modelContainer.mainContext
-        
-        let fetchRequest: FetchDescriptor<WPACreditCardEntity>
-        if excludingBookmarks {
-            fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { !$0.isBookmarked })
-        } else {
-            fetchRequest = FetchDescriptor<WPACreditCardEntity>()
-        }
+        let fetchRequest = createFetchRequest(excludingBookmarks: excludingBookmarks)
         
         do {
             let creditCards = try context.fetch(fetchRequest)
@@ -71,11 +88,11 @@ class WPACreditCardPersistence {
             return .success(())
         } catch {
             debugPrint("WPACreditCardPersistence: Failed to delete all credit cards: \(error)")
-            return .failure(error)
+            return .failure(.deleteFailed(error))
         }
     }
     
-    @MainActor func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) -> Result<Void, Error> {
+    @MainActor func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) -> Result<Void, CreditCardPersistenceError> {
         let context = modelContainer.mainContext
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { $0.ccUid == ccUid })
         
@@ -86,15 +103,15 @@ class WPACreditCardPersistence {
                 return .success(())
             } else {
                 debugPrint("WPACreditCardPersistence: No credit card found with ccUid: \(ccUid)")
-                return .failure(NSError(domain: "WPACreditCardPersistence", code: 404, userInfo: [NSLocalizedDescriptionKey: "No credit card found with ccUid: \(ccUid)"]))
+                return .failure(.cardNotFound(ccUid))
             }
         } catch {
             debugPrint("WPACreditCardPersistence: Failed to bookmark credit card: \(error)")
-            return .failure(error)
+            return .failure(.saveFailed(error))
         }
     }
     
-    @MainActor func fetchBookmarkedCreditCards() -> Result<[WPACreditCardEntity], Error> {
+    @MainActor func fetchBookmarkedCreditCards() -> Result<[WPACreditCardEntity], CreditCardPersistenceError> {
         let context = modelContainer.mainContext
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { $0.isBookmarked })
         
@@ -103,7 +120,15 @@ class WPACreditCardPersistence {
             return .success(cards)
         } catch {
             debugPrint("WPACreditCardPersistence: Failed to fetch Bookmarked credit cards: \(error)")
-            return .failure(error)
+            return .failure(.fetchFailed(error))
+        }
+    }
+    
+    private func createFetchRequest(excludingBookmarks: Bool) -> FetchDescriptor<WPACreditCardEntity> {
+        if excludingBookmarks {
+            return FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { !$0.isBookmarked })
+        } else {
+            return FetchDescriptor<WPACreditCardEntity>()
         }
     }
 }
