@@ -2,7 +2,7 @@
 //  WPAssignmentApp.swift
 //  WPAssignment
 //
-//  Created by EdgeCaseDesigns on 29/11/24.
+//  Created by Karthick Mannarkudi Ramesh Kumar on 29/11/24.
 //
 
 import SwiftUI
@@ -10,23 +10,9 @@ import SwiftData
 
 @main
 struct WPAssignmentApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
-
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            WPADashboardView()
         }
-        .modelContainer(sharedModelContainer)
     }
 }
