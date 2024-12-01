@@ -25,7 +25,7 @@ struct WPACreditCardsView: View {
     @ViewBuilder
     private var contentView: some View {
         if viewModel.groupedCards.isEmpty {
-            WPAProgressView(message: WPAGenericConstants.CreditCardPage.kLoadingPlaceholderDescription)
+            WPAProgressView(message: WPAGenericConstants.kLoadingPlaceholderDescription)
         } else if viewModel.errorMessage != nil {
             WPAErrorView(errorMessage: viewModel.errorMessage ?? "")
         } else {

@@ -8,6 +8,8 @@
 import Foundation
 
 struct WPAGenericConstants {
+    static let kLoadingPlaceholderDescription: String = "Loading..."
+
     struct TabBar {
         static let kCreditCardTabTitle = "Credit Cards"
         static let kCreditCardImageName: String = "creditcard"
@@ -22,7 +24,6 @@ struct WPAGenericConstants {
     }
     
     struct CreditCardPage {
-        static let kLoadingPlaceholderDescription: String = "Loading..."
         static let kEmptyCreditCardDescription: String = "There are no Credit Cards"
     }
     
