@@ -10,6 +10,7 @@ import SwiftData
 import SwiftUICore
 import _SwiftData_SwiftUI
 
+// Enum defining possible errors during credit card persistence operations
 enum CreditCardPersistenceError: Error {
     case initializationFailed(String)
     case saveFailed(Error)
@@ -33,6 +34,7 @@ enum CreditCardPersistenceError: Error {
     }
 }
 
+// Protocol defining the persistence operations for credit cards
 protocol WPACreditCardPersistenceProtocol {
     func saveCard(_ creditCard: WPACreditCardEntity) -> Result<Void, CreditCardPersistenceError>
     func fetchCreditCards() -> Result<[WPACreditCardEntity], CreditCardPersistenceError>
@@ -41,11 +43,13 @@ protocol WPACreditCardPersistenceProtocol {
     func fetchBookmarkedCreditCards() -> Result<[WPACreditCardEntity], CreditCardPersistenceError>
 }
 
+// Class implementing the persistence protocol, handling credit card data storage
 class WPACreditCardPersistence: @preconcurrency WPACreditCardPersistenceProtocol {
     private let modelContainer: ModelContainer
     
     static let shared = WPACreditCardPersistence()
     
+    // Default initializer, sets up the model container
     init() {
         do {
             self.modelContainer = try ModelContainer(for: WPACreditCardEntity.self)
@@ -59,6 +63,7 @@ class WPACreditCardPersistence: @preconcurrency WPACreditCardPersistenceProtocol
         self.modelContainer = container
     }
     
+    // Saves a credit card entity to the database
     @MainActor func saveCard(_ creditCard: WPACreditCardEntity) -> Result<Void, CreditCardPersistenceError> {
         let context = modelContainer.mainContext
         context.insert(creditCard)
@@ -72,6 +77,7 @@ class WPACreditCardPersistence: @preconcurrency WPACreditCardPersistenceProtocol
         }
     }
     
+    // Fetches all credit card entities from the database
     @MainActor func fetchCreditCards() -> Result<[WPACreditCardEntity], CreditCardPersistenceError> {
         let context = modelContainer.mainContext
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>()
@@ -85,6 +91,7 @@ class WPACreditCardPersistence: @preconcurrency WPACreditCardPersistenceProtocol
         }
     }
     
+    // Deletes all credit card entities, optionally excluding bookmarked ones
     @MainActor func deleteAllCreditCards(excludingBookmarks: Bool = true) -> Result<Void, CreditCardPersistenceError> {
         let context = modelContainer.mainContext
         let fetchRequest = createFetchRequest(excludingBookmarks: excludingBookmarks)
@@ -100,6 +107,7 @@ class WPACreditCardPersistence: @preconcurrency WPACreditCardPersistenceProtocol
         }
     }
     
+    // Updates the bookmark status of a specific credit card
     @MainActor func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) -> Result<Void, CreditCardPersistenceError> {
         let context = modelContainer.mainContext
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { $0.ccUid == ccUid })
@@ -119,6 +127,7 @@ class WPACreditCardPersistence: @preconcurrency WPACreditCardPersistenceProtocol
         }
     }
     
+    // Fetches all bookmarked credit card entities
     @MainActor func fetchBookmarkedCreditCards() -> Result<[WPACreditCardEntity], CreditCardPersistenceError> {
         let context = modelContainer.mainContext
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { $0.isBookmarked })
@@ -132,6 +141,7 @@ class WPACreditCardPersistence: @preconcurrency WPACreditCardPersistenceProtocol
         }
     }
     
+    // Helper function to create a fetch request based on bookmark exclusion
     private func createFetchRequest(excludingBookmarks: Bool) -> FetchDescriptor<WPACreditCardEntity> {
         if excludingBookmarks {
             return FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { !$0.isBookmarked })
@@ -141,6 +151,7 @@ class WPACreditCardPersistence: @preconcurrency WPACreditCardPersistenceProtocol
     }
 }
 
+// Extension to create a temporary model container for testing
 extension ModelContainer {
     @MainActor static func temporary(entities: any PersistentModel.Type, withMockData mockData: [any PersistentModel] = []) -> ModelContainer {
         do {

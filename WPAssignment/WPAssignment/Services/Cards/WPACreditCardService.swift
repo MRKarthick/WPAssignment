@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+// Protocol defining the service operations for credit cards
 protocol WPACreditCardServiceProtocol {
     func fetchCards(isForceFetch: Bool) -> AnyPublisher<[WPACreditCardDTO], Error>
     func fetchBookmarkedCards() -> AnyPublisher<[WPACreditCardDTO], Error>
@@ -23,11 +24,13 @@ class WPACreditCardService: WPACreditCardServiceProtocol {
     private let persistence: WPACreditCardPersistenceProtocol
     private var cancellables = Set<AnyCancellable>()
     
+    // Default initializer, sets up the API service and persistence layer
     init(apiService: APIServiceProtocol = WPAService(), persistence: WPACreditCardPersistenceProtocol = WPACreditCardPersistence.shared) {
         self.apiService = apiService
         self.persistence = persistence
     }
     
+    // Updates the bookmark status of a specific credit card
     func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) {
         Task { @MainActor in
             let result = persistence.updateBookmark(forCardWithCcUid: ccUid, withValue: isBookmarked)
@@ -37,6 +40,7 @@ class WPACreditCardService: WPACreditCardServiceProtocol {
         }
     }
     
+    // Fetches all bookmarked credit cards and returns them as DTOs
     func fetchBookmarkedCards() -> AnyPublisher<[WPACreditCardDTO], Error> {
         Future { promise in
             Task { @MainActor in
@@ -53,6 +57,7 @@ class WPACreditCardService: WPACreditCardServiceProtocol {
         .eraseToAnyPublisher()
     }
     
+    // Fetches all credit cards, optionally forcing a fetch from the API
     func fetchCards(isForceFetch: Bool = false) -> AnyPublisher<[WPACreditCardDTO], Error> {
         if isForceFetch {
             let urlString = "\(WPACreditCardService.kCreditCardsURL)?size=100"
@@ -93,6 +98,7 @@ class WPACreditCardService: WPACreditCardServiceProtocol {
         }
     }
     
+    // Persists credit card details, optionally deleting existing data
     @MainActor func persistCreditCardDetails(_ models: [WPACreditCardModel], deleteExistingData: Bool = true) {
         if deleteExistingData {
             let result = persistence.deleteAllCreditCards(excludingBookmarks: true)
@@ -110,6 +116,3 @@ class WPACreditCardService: WPACreditCardServiceProtocol {
         }
     }
 }
-
-
-
