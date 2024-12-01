@@ -21,7 +21,7 @@ class WPACreditCardViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {
-                    self?.errorMessage = error.localizedDescription
+                    self?.errorMessage = "Failed to fetch cards: \(error.localizedDescription)"
                 }
             }, receiveValue: { [weak self] fetchedCards in
                 self?.groupedCards = Dictionary(grouping: fetchedCards, by: { $0.ccType }).sorted(by: { $0.key < $1.key })
