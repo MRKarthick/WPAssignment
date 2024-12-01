@@ -20,12 +20,12 @@ class WPACreditCardService: WPACreditCardServiceProtocol {
     
     static let shared = WPACreditCardService()
     
-    private let apiService: APIServiceProtocol
+    private let apiService: WPAAPIServiceProtocol
     private let persistence: WPACreditCardPersistenceProtocol
     private var cancellables = Set<AnyCancellable>()
     
     // Default initializer, sets up the API service and persistence layer
-    init(apiService: APIServiceProtocol = WPAService(), persistence: WPACreditCardPersistenceProtocol = WPACreditCardPersistence.shared) {
+    init(apiService: WPAAPIServiceProtocol = WPAService(), persistence: WPACreditCardPersistenceProtocol = WPACreditCardPersistence.shared) {
         self.apiService = apiService
         self.persistence = persistence
     }

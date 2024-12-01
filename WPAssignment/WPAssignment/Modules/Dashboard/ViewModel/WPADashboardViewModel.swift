@@ -7,27 +7,27 @@
 
 import Foundation
 
-enum TabType: String, CaseIterable {
+enum WPATabType: String, CaseIterable {
     case creditCards
     case bookmarks
 }
 
-struct TabItemData {
+struct WPATabItemData {
     let title: String
     let tabImageName: String
-    let tabType: TabType
+    let tabType: WPATabType
 }
 
 class WPADashboardViewModel: ObservableObject {
-    @Published var tabItems: [TabItemData] = []
+    @Published var tabItems: [WPATabItemData] = []
     
     func fetchTabItems() {
         tabItems = [
-            TabItemData(
+            WPATabItemData(
                 title: WPAGenericConstants.TabBar.kCreditCardTabTitle,
                 tabImageName: WPAGenericConstants.TabBar.kCreditCardImageName,
                 tabType: .creditCards),
-            TabItemData(
+            WPATabItemData(
                 title: WPAGenericConstants.TabBar.kBookmarksTabTitle,
                 tabImageName: WPAGenericConstants.TabBar.kBookmarkImageName,
                 tabType: .bookmarks)

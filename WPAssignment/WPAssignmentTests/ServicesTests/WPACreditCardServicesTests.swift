@@ -10,7 +10,7 @@ import XCTest
 import Combine
 @testable import WPAssignment
 
-class MockAPIService: APIServiceProtocol {
+class WPAMockAPIService: WPAAPIServiceProtocol {
     var result: Result<[WPACreditCardModel], Error>?
     
     func fetchData<T: Decodable>(from urlString: String) -> Future<T, Error> {
@@ -55,13 +55,13 @@ class MockPersistence: WPACreditCardPersistenceProtocol {
 
 class WPACreditCardServiceTests: XCTestCase {
     var service: WPACreditCardService!
-    var mockAPIService: MockAPIService!
+    var mockAPIService: WPAMockAPIService!
     var mockPersistence: MockPersistence!
     var cancellables: Set<AnyCancellable> = []
 
     override func setUp() {
         super.setUp()
-        mockAPIService = MockAPIService()
+        mockAPIService = WPAMockAPIService()
         mockPersistence = MockPersistence()
         service = WPACreditCardService(apiService: mockAPIService, persistence: mockPersistence)
     }

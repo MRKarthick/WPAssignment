@@ -9,7 +9,7 @@ import XCTest
 import Combine
 @testable import WPAssignment
 
-class MockSession: NetworkSession {
+class WPAMockSession: WPANetworkSession {
     var data: Data?
     var error: Error?
     
@@ -23,7 +23,7 @@ class WPAServiceTests: XCTestCase {
     var cancellables: Set<AnyCancellable> = []
     
     func testFetchDataSuccess() {
-        let mockSession = MockSession()
+        let mockSession = WPAMockSession()
         let testData = "{\"key\":\"value\"}".data(using: .utf8)!
         mockSession.data = testData
         
@@ -46,7 +46,7 @@ class WPAServiceTests: XCTestCase {
     }
     
     func testFetchDataFailure() {
-        let mockSession = MockSession()
+        let mockSession = WPAMockSession()
         mockSession.error = APIError.noData
         
         let service = WPAService(session: mockSession)

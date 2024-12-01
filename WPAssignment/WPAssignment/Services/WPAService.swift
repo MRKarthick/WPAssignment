@@ -8,20 +8,20 @@
 import Foundation
 import Combine
 
-protocol NetworkSession {
+protocol WPANetworkSession {
     func dataTask(with url: URL, completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask
 }
 
-protocol APIServiceProtocol {
+protocol WPAAPIServiceProtocol {
     func fetchData<T: Decodable>(from urlString: String) -> Future<T, Error>
 }
 
-extension URLSession: NetworkSession {}
+extension URLSession: WPANetworkSession {}
 
-class WPAService: APIServiceProtocol {
-    private let session: NetworkSession
+class WPAService: WPAAPIServiceProtocol {
+    private let session: WPANetworkSession
     
-    init(session: NetworkSession = URLSession.shared) {
+    init(session: WPANetworkSession = URLSession.shared) {
         self.session = session
     }
     

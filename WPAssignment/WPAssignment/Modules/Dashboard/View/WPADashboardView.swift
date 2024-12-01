@@ -35,7 +35,7 @@ struct WPADashboardView: View {
     }
     
     @ViewBuilder
-    private func tabView(for tabItem: TabItemData) -> some View {
+    private func tabView(for tabItem: WPATabItemData) -> some View {
         switch tabItem.tabType {
         case .creditCards:
             WPACreditCardsView()
