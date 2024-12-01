@@ -25,11 +25,11 @@ struct WPACardItemView: View {
                 Text("\(WPAGenericConstants.CreditCardItem.kCreditCardNumberTitle):  \(card.ccNumber)")
                 Text("\(WPAGenericConstants.CreditCardItem.kCreditCardExpiryTitle): \(card.ccExpiryDate)")
             }
-            if onBookmarkToggle != nil {
+            if let onBookmarkToggle = onBookmarkToggle {
                 Spacer()
                 Button(action: {
                     isBookmarked.toggle()
-                    onBookmarkToggle!()
+                    onBookmarkToggle()
                 }) {
                     Image(systemName: getBookmarkImageName())
                         .foregroundColor(.blue)
