@@ -28,27 +28,27 @@ class MockAPIService: APIServiceProtocol {
 }
 
 class MockPersistence: WPACreditCardPersistenceProtocol {
-    var saveResult: Result<Void, CreditCardPersistenceError> = .success(())
-    var fetchResult: Result<[WPACreditCardEntity], CreditCardPersistenceError> = .success([])
-    var updateResult: Result<Void, CreditCardPersistenceError> = .success(())
+    var saveResult: Result<Void, WPACreditCardPersistenceError> = .success(())
+    var fetchResult: Result<[WPACreditCardEntity], WPACreditCardPersistenceError> = .success([])
+    var updateResult: Result<Void, WPACreditCardPersistenceError> = .success(())
     
-    func saveCard(_ creditCard: WPACreditCardEntity) -> Result<Void, CreditCardPersistenceError> {
+    func saveCard(_ creditCard: WPACreditCardEntity) -> Result<Void, WPACreditCardPersistenceError> {
         return saveResult
     }
     
-    func fetchCreditCards() -> Result<[WPACreditCardEntity], CreditCardPersistenceError> {
+    func fetchCreditCards() -> Result<[WPACreditCardEntity], WPACreditCardPersistenceError> {
         return fetchResult
     }
     
-    func deleteAllCreditCards(excludingBookmarks: Bool) -> Result<Void, CreditCardPersistenceError> {
+    func deleteAllCreditCards(excludingBookmarks: Bool) -> Result<Void, WPACreditCardPersistenceError> {
         return .success(())
     }
     
-    func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) -> Result<Void, CreditCardPersistenceError> {
+    func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) -> Result<Void, WPACreditCardPersistenceError> {
         return updateResult
     }
     
-    func fetchBookmarkedCreditCards() -> Result<[WPACreditCardEntity], CreditCardPersistenceError> {
+    func fetchBookmarkedCreditCards() -> Result<[WPACreditCardEntity], WPACreditCardPersistenceError> {
         return fetchResult
     }
 }
