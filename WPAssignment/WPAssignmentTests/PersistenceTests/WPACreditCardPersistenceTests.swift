@@ -133,4 +133,31 @@ final class WPACreditCardPersistenceTests: XCTestCase {
             XCTFail("Fetch bookmarked cards failed with error: \(error.localizedDescription)")
         }
     }
+    
+    @MainActor
+    func testSaveMultipleCards() {
+        // Given: Multiple new credit card entities
+        let creditCard1 = WPACreditCardEntity(ccId: 1, ccUid: "123", ccNumber: "4111111111111111", ccExpiryDate: "12/25", ccType: "Visa")
+        let creditCard2 = WPACreditCardEntity(ccId: 2, ccUid: "456", ccNumber: "4222222222222222", ccExpiryDate: "11/24", ccType: "MasterCard")
+        let creditCards = [creditCard1, creditCard2]
+        
+        // When: Saving multiple credit cards
+        let result = persistence.saveCards(creditCards)
+        
+        // Then: The save operation should succeed
+        switch result {
+        case .success:
+            let fetchResult = persistence.fetchCreditCards()
+            switch fetchResult {
+            case .success(let cards):
+                XCTAssertEqual(cards.count, 2)
+                XCTAssertTrue(cards.contains(where: { $0.ccUid == "123" }))
+                XCTAssertTrue(cards.contains(where: { $0.ccUid == "456" }))
+            case .failure(let error):
+                XCTFail("Fetch failed with error: \(error.localizedDescription)")
+            }
+        case .failure(let error):
+            XCTFail("Save multiple cards failed with error: \(error.localizedDescription)")
+        }
+    }
 }

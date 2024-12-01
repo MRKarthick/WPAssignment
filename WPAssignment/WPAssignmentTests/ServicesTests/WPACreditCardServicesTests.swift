@@ -36,6 +36,10 @@ class MockPersistence: WPACreditCardPersistenceProtocol {
         return saveResult
     }
     
+    func saveCards(_ creditCards: [WPAssignment.WPACreditCardEntity]) -> Result<Void, WPAssignment.WPACreditCardPersistenceError> {
+        return saveResult
+    }
+    
     func fetchCreditCards() -> Result<[WPACreditCardEntity], WPACreditCardPersistenceError> {
         return fetchResult
     }
