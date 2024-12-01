@@ -28,33 +28,35 @@ class WPACreditCardPersistence {
         self.modelContainer = container
     }
     
-    @MainActor func saveCard(_ creditCard: WPACreditCardEntity) {
+    @MainActor func saveCard(_ creditCard: WPACreditCardEntity) -> Result<Void, Error> {
         let context = modelContainer.mainContext
         context.insert(creditCard)
         
         do {
             try context.save()
+            return .success(())
         } catch {
             debugPrint("WPACreditCardPersistence: Failed to save credit card: \(error)")
+            return .failure(error)
         }
     }
     
-    @MainActor func fetchCreditCards() -> [WPACreditCardEntity] {
+    @MainActor func fetchCreditCards() -> Result<[WPACreditCardEntity], Error> {
         let context = modelContainer.mainContext
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>()
         
         do {
-            return try context.fetch(fetchRequest)
+            let cards = try context.fetch(fetchRequest)
+            return .success(cards)
         } catch {
             debugPrint("WPACreditCardPersistence: Failed to fetch credit cards: \(error)")
-            return []
+            return .failure(error)
         }
     }
     
-    @MainActor func deleteAllCreditCards(excludingBookmarks: Bool = true) {
+    @MainActor func deleteAllCreditCards(excludingBookmarks: Bool = true) -> Result<Void, Error> {
         let context = modelContainer.mainContext
         
-        // Update the fetch request to exclude bookmarked credit cards
         let fetchRequest: FetchDescriptor<WPACreditCardEntity>
         if excludingBookmarks {
             fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { !$0.isBookmarked })
@@ -66,12 +68,14 @@ class WPACreditCardPersistence {
             let creditCards = try context.fetch(fetchRequest)
             creditCards.forEach { context.delete($0) }
             try context.save()
+            return .success(())
         } catch {
             debugPrint("WPACreditCardPersistence: Failed to delete all credit cards: \(error)")
+            return .failure(error)
         }
     }
     
-    @MainActor func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) {
+    @MainActor func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) -> Result<Void, Error> {
         let context = modelContainer.mainContext
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { $0.ccUid == ccUid })
         
@@ -79,29 +83,32 @@ class WPACreditCardPersistence {
             if let creditCard = try context.fetch(fetchRequest).first {
                 creditCard.isBookmarked = isBookmarked
                 try context.save()
+                return .success(())
             } else {
                 debugPrint("WPACreditCardPersistence: No credit card found with ccUid: \(ccUid)")
+                return .failure(NSError(domain: "WPACreditCardPersistence", code: 404, userInfo: [NSLocalizedDescriptionKey: "No credit card found with ccUid: \(ccUid)"]))
             }
         } catch {
             debugPrint("WPACreditCardPersistence: Failed to bookmark credit card: \(error)")
+            return .failure(error)
         }
     }
     
-    @MainActor func fetchBookmarkedCreditCards() -> [WPACreditCardEntity] {
+    @MainActor func fetchBookmarkedCreditCards() -> Result<[WPACreditCardEntity], Error> {
         let context = modelContainer.mainContext
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { $0.isBookmarked })
         
         do {
-            return try context.fetch(fetchRequest)
+            let cards = try context.fetch(fetchRequest)
+            return .success(cards)
         } catch {
             debugPrint("WPACreditCardPersistence: Failed to fetch Bookmarked credit cards: \(error)")
-            return []
+            return .failure(error)
         }
     }
 }
 
 extension ModelContainer {
-    // Creates a temporary in-memory ModelContainer for testing and preview use
     @MainActor static func temporary(entities: any PersistentModel.Type, withMockData mockData: [any PersistentModel] = []) -> ModelContainer {
         do {
             let configuration = ModelConfiguration(isStoredInMemoryOnly: true)

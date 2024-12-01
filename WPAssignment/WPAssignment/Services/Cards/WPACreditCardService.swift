@@ -16,21 +16,25 @@ class WPACreditCardService {
     private let apiService = WPAService()
     private var cancellables = Set<AnyCancellable>()
     
-    // Currently there is no API to persist bookmark in Backend. So the service layer here just persists in SQLite DB
     func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) {
         Task { @MainActor in
-            WPACreditCardPersistence.shared.updateBookmark(forCardWithCcUid: ccUid, withValue: isBookmarked)
+            let result = WPACreditCardPersistence.shared.updateBookmark(forCardWithCcUid: ccUid, withValue: isBookmarked)
+            if case .failure(let error) = result {
+                debugPrint("Failed to update bookmark: \(error)")
+            }
         }
     }
     
-    // Currently there is no API to fetch bookmark from Backend. So the service layer here just retrieves it from SQLite DB
     func fetchBookmarkedCards(completion: @escaping (Result<[WPACreditCardDTO], Error>) -> Void) {
         Task { @MainActor in
-            let creditCards: [WPACreditCardEntity] = WPACreditCardPersistence.shared.fetchBookmarkedCreditCards()
-            let modelDTOs = creditCards.map { model in
-                return WPACreditCardDTO.getDTOfrom(model)
+            let result = WPACreditCardPersistence.shared.fetchBookmarkedCreditCards()
+            switch result {
+            case .success(let creditCards):
+                let modelDTOs = creditCards.map { WPACreditCardDTO.getDTOfrom($0) }
+                completion(.success(modelDTOs))
+            case .failure(let error):
+                completion(.failure(error))
             }
-            completion(.success(modelDTOs))
         }
     }
     
@@ -48,21 +52,25 @@ class WPACreditCardService {
         } else {
             return Future { promise in
                 Task { @MainActor in
-                    let creditCards: [WPACreditCardEntity] = WPACreditCardPersistence.shared.fetchCreditCards()
-                    let modelDTOs = creditCards.map { WPACreditCardDTO.getDTOfrom($0) }
-                    
-                    if modelDTOs.isEmpty {
-                        self.fetchCards(isForceFetch: true)
-                            .sink(receiveCompletion: { completion in
-                                if case .failure(let error) = completion {
-                                    promise(.failure(error))
-                                }
-                            }, receiveValue: { value in
-                                promise(.success(value))
-                            })
-                            .store(in: &self.cancellables)
-                    } else {
-                        promise(.success(modelDTOs))
+                    let result = WPACreditCardPersistence.shared.fetchCreditCards()
+                    switch result {
+                    case .success(let creditCards):
+                        let modelDTOs = creditCards.map { WPACreditCardDTO.getDTOfrom($0) }
+                        if modelDTOs.isEmpty {
+                            self.fetchCards(isForceFetch: true)
+                                .sink(receiveCompletion: { completion in
+                                    if case .failure(let error) = completion {
+                                        promise(.failure(error))
+                                    }
+                                }, receiveValue: { value in
+                                    promise(.success(value))
+                                })
+                                .store(in: &self.cancellables)
+                        } else {
+                            promise(.success(modelDTOs))
+                        }
+                    case .failure(let error):
+                        promise(.failure(error))
                     }
                 }
             }
@@ -72,12 +80,18 @@ class WPACreditCardService {
     
     @MainActor func persistCreditCardDetails(_ models: [WPACreditCardModel], deleteExistingData: Bool = true) {
         if deleteExistingData {
-            WPACreditCardPersistence.shared.deleteAllCreditCards()
+            let result = WPACreditCardPersistence.shared.deleteAllCreditCards()
+            if case .failure(let error) = result {
+                debugPrint("Failed to delete existing credit cards: \(error)")
+            }
         }
         
         for model in models {
             let entity = WPACreditCardEntity.getDTOfrom(model)
-            WPACreditCardPersistence.shared.saveCard(entity)
+            let result = WPACreditCardPersistence.shared.saveCard(entity)
+            if case .failure(let error) = result {
+                debugPrint("Failed to save credit card: \(error)")
+            }
         }
     }
 }
