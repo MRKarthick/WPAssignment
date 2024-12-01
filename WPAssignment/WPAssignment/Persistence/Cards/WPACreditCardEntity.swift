@@ -15,14 +15,15 @@ final class WPACreditCardEntity {
     var ccNumber: String
     var ccExpiryDate: String
     var ccType: String
-    var isBookmarked: Bool = false
+    var isBookmarked: Bool
     
-    init(ccId: UInt64, ccUid: String, ccNumber: String, ccExpiryDate: String, ccType: String) {
+    init(ccId: UInt64, ccUid: String, ccNumber: String, ccExpiryDate: String, ccType: String, isBookmarked: Bool = false) {
         self.id = ccId
         self.ccUid = ccUid
         self.ccNumber = ccNumber
         self.ccExpiryDate = ccExpiryDate
         self.ccType = ccType
+        self.isBookmarked = isBookmarked
     }
 }
 
