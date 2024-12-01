@@ -8,7 +8,19 @@
 import Foundation
 import Combine
 
+protocol NetworkSession {
+    func dataTask(with url: URL, completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask
+}
+
+extension URLSession: NetworkSession {}
+
 class WPAService {
+    private let session: NetworkSession
+    
+    init(session: NetworkSession = URLSession.shared) {
+        self.session = session
+    }
+    
     func fetchData<T: Decodable>(from urlString: String) -> Future<T, Error> {
         return Future { promise in
             guard let url = URL(string: urlString) else {
@@ -16,7 +28,7 @@ class WPAService {
                 return
             }
             
-            URLSession.shared.dataTask(with: url) { data, response, error in
+            self.session.dataTask(with: url) { data, response, error in
                 if let error = error {
                     promise(.failure(error))
                     return
