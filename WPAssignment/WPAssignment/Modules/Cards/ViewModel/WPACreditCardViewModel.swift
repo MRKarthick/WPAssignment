@@ -36,8 +36,8 @@ class WPACreditCardViewModel: ObservableObject {
                     self?.errorMessage = "\(WPAErrorConstants.kFailedCreditCardsErrorTitle): \(error.localizedDescription)"
                 }
             }, receiveValue: { [weak self] fetchedCards in
-                // Group fetched cards by type and sort them
-                self?.groupedCards = Dictionary(grouping: fetchedCards, by: { $0.ccType }).sorted(by: { $0.key < $1.key })
+                // Use the static method for grouping and sorting
+                self?.groupedCards = WPACreditCardDTO.groupAndSortCreditCards(fetchedCards)
                 self?.errorMessage = nil
             })
             .store(in: &cancellables)

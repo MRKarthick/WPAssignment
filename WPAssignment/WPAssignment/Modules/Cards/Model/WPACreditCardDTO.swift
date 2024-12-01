@@ -37,5 +37,10 @@ final class WPACreditCardDTO: Identifiable, Equatable {
         ccDto.isBookmarked = entity.isBookmarked
         return ccDto
     }
+    
+    static func groupAndSortCreditCards(_ cards: [WPACreditCardDTO]) -> [(key: String, value: [WPACreditCardDTO])] {
+        return Dictionary(grouping: cards, by: { $0.ccType })
+            .sorted(by: { $0.key < $1.key })
+    }
 }
 

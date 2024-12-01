@@ -30,17 +30,11 @@ class WPABookmarksViewModel: ObservableObject {
                     self?.errorMessage = "\(WPAErrorConstants.kFailedBookmarksErrorTitle): \(error.localizedDescription)"
                 }
             }, receiveValue: { [weak self] fetchedCards in
-                // Process and store the fetched cards
-                self?.groupedBookmarks = self?.groupAndSortBookmarks(fetchedCards) ?? []
+                // Use the static method for grouping and sorting
+                self?.groupedBookmarks = WPACreditCardDTO.groupAndSortCreditCards(fetchedCards)
                 self?.errorMessage = nil
             })
             // Store the cancellable to manage the subscription's lifecycle
             .store(in: &cancellables)
-    }
-    
-    // Helper function to group and sort bookmarks by credit card type
-    private func groupAndSortBookmarks(_ cards: [WPACreditCardDTO]) -> [(key: String, value: [WPACreditCardDTO])] {
-        return Dictionary(grouping: cards, by: { $0.ccType })
-            .sorted(by: { $0.key < $1.key })
     }
 }
