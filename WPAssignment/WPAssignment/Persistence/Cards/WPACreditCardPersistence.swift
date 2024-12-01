@@ -33,7 +33,15 @@ enum CreditCardPersistenceError: Error {
     }
 }
 
-class WPACreditCardPersistence {
+protocol WPACreditCardPersistenceProtocol {
+    func saveCard(_ creditCard: WPACreditCardEntity) -> Result<Void, CreditCardPersistenceError>
+    func fetchCreditCards() -> Result<[WPACreditCardEntity], CreditCardPersistenceError>
+    func deleteAllCreditCards(excludingBookmarks: Bool) -> Result<Void, CreditCardPersistenceError>
+    func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) -> Result<Void, CreditCardPersistenceError>
+    func fetchBookmarkedCreditCards() -> Result<[WPACreditCardEntity], CreditCardPersistenceError>
+}
+
+class WPACreditCardPersistence: @preconcurrency WPACreditCardPersistenceProtocol {
     private let modelContainer: ModelContainer
     
     static let shared = WPACreditCardPersistence()

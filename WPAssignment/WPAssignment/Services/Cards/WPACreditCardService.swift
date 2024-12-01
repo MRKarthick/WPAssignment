@@ -19,12 +19,18 @@ class WPACreditCardService: WPACreditCardServiceProtocol {
     
     static let shared = WPACreditCardService()
     
-    private let apiService = WPAService()
+    private let apiService: APIServiceProtocol
+    private let persistence: WPACreditCardPersistenceProtocol
     private var cancellables = Set<AnyCancellable>()
+    
+    init(apiService: APIServiceProtocol = WPAService(), persistence: WPACreditCardPersistenceProtocol = WPACreditCardPersistence.shared) {
+        self.apiService = apiService
+        self.persistence = persistence
+    }
     
     func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) {
         Task { @MainActor in
-            let result = WPACreditCardPersistence.shared.updateBookmark(forCardWithCcUid: ccUid, withValue: isBookmarked)
+            let result = persistence.updateBookmark(forCardWithCcUid: ccUid, withValue: isBookmarked)
             if case .failure(let error) = result {
                 debugPrint("Failed to update bookmark: \(error)")
             }
@@ -89,7 +95,7 @@ class WPACreditCardService: WPACreditCardServiceProtocol {
     
     @MainActor func persistCreditCardDetails(_ models: [WPACreditCardModel], deleteExistingData: Bool = true) {
         if deleteExistingData {
-            let result = WPACreditCardPersistence.shared.deleteAllCreditCards()
+            let result = persistence.deleteAllCreditCards(excludingBookmarks: true)
             if case .failure(let error) = result {
                 debugPrint("Failed to delete existing credit cards: \(error)")
             }
@@ -97,7 +103,7 @@ class WPACreditCardService: WPACreditCardServiceProtocol {
         
         for model in models {
             let entity = WPACreditCardEntity.getDTOfrom(model)
-            let result = WPACreditCardPersistence.shared.saveCard(entity)
+            let result = persistence.saveCard(entity)
             if case .failure(let error) = result {
                 debugPrint("Failed to save credit card: \(error)")
             }

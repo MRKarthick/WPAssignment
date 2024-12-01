@@ -12,9 +12,13 @@ protocol NetworkSession {
     func dataTask(with url: URL, completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask
 }
 
+protocol APIServiceProtocol {
+    func fetchData<T: Decodable>(from urlString: String) -> Future<T, Error>
+}
+
 extension URLSession: NetworkSession {}
 
-class WPAService {
+class WPAService: APIServiceProtocol {
     private let session: NetworkSession
     
     init(session: NetworkSession = URLSession.shared) {
