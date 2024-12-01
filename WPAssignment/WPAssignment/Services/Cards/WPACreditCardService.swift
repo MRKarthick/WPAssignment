@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftData
+import Combine
 
 class WPACreditCardService {
     static let kCreditCardsURL: String = "\(WPAURLConstants.kRandomAPIV2URL)/credit_cards"
@@ -31,34 +31,40 @@ class WPACreditCardService {
             completion(.success(modelDTOs))
         }
     }
-
-    func fetchCards(completion: @escaping (Result<[WPACreditCardDTO], Error>) -> Void, isForceFetch: Bool = false) {
-        guard isForceFetch else {
-            Task { @MainActor in
-                let creditCards: [WPACreditCardEntity] = WPACreditCardPersistence.shared.fetchCreditCards()
-                let modelDTOs = creditCards.map { model in
-                    return WPACreditCardDTO.getDTOfrom(model)
+    
+    func fetchCards(isForceFetch: Bool = false) -> AnyPublisher<[WPACreditCardDTO], Error> {
+        if isForceFetch {
+            let urlString = "\(WPACreditCardService.kCreditCardsURL)?size=100"
+            return apiService.fetchData(from: urlString)
+                .flatMap { (models: [WPACreditCardModel]) -> AnyPublisher<[WPACreditCardDTO], Error> in
+                    Task { @MainActor in
+                        self.persistCreditCardDetails(models, deleteExistingData: isForceFetch)
+                    }
+                    return self.fetchCards(isForceFetch: false)
                 }
-                
-                if modelDTOs.isEmpty {
-                    fetchCards(completion: completion, isForceFetch: true)
-                }
-                completion(.success(modelDTOs))
-            }
-            return
-        }
-        
-        let urlString = "\(WPACreditCardService.kCreditCardsURL)?size=100"
-        apiService.fetchData(from: urlString) { (result: Result<[WPACreditCardModel], Error>) in
-            switch result {
-            case .success(let models):
+                .eraseToAnyPublisher()
+        } else {
+            return Future { promise in
                 Task { @MainActor in
-                    self.persistCreditCardDetails(models, deleteExistingData: isForceFetch)
-                    self.fetchCards(completion: completion, isForceFetch: false)
+                    let creditCards: [WPACreditCardEntity] = WPACreditCardPersistence.shared.fetchCreditCards()
+                    let modelDTOs = creditCards.map { WPACreditCardDTO.getDTOfrom($0) }
+                    
+                    if modelDTOs.isEmpty {
+                        self.fetchCards(isForceFetch: true)
+                            .sink(receiveCompletion: { completion in
+                                if case .failure(let error) = completion {
+                                    promise(.failure(error))
+                                }
+                            }, receiveValue: { value in
+                                promise(.success(value))
+                            })
+                            .store(in: &self.cancellables)
+                    } else {
+                        promise(.success(modelDTOs))
+                    }
                 }
-            case .failure(let error):
-                completion(.failure(error))
             }
+            .eraseToAnyPublisher()
         }
     }
     
@@ -72,6 +78,8 @@ class WPACreditCardService {
             WPACreditCardPersistence.shared.saveCard(entity)
         }
     }
+    
+    private var cancellables = Set<AnyCancellable>()
 }
 
 

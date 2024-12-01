@@ -7,23 +7,26 @@
 
 import SwiftUI
 import SwiftData
+import Combine
 
 class WPACreditCardViewModel: ObservableObject {
     @Published var groupedCards: [(key: String, value: [WPACreditCardDTO])] = []
     @Published var cardsDto: [WPACreditCardDTO] = []
     @Published var errorMessage: String? = nil
     
+    private var cancellables = Set<AnyCancellable>()
+    
     func fetchCards(isForceFetch: Bool = false) {
-        WPACreditCardService.shared.fetchCards(completion: { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let fetchedCards):
-                    self?.groupedCards = Dictionary(grouping: fetchedCards, by: { $0.ccType }).sorted(by: { $0.key < $1.key })
-                case .failure(let error):
+        WPACreditCardService.shared.fetchCards(isForceFetch: isForceFetch)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] completion in
+                if case .failure(let error) = completion {
                     self?.errorMessage = error.localizedDescription
                 }
-            }
-        }, isForceFetch: isForceFetch)
+            }, receiveValue: { [weak self] fetchedCards in
+                self?.groupedCards = Dictionary(grouping: fetchedCards, by: { $0.ccType }).sorted(by: { $0.key < $1.key })
+            })
+            .store(in: &cancellables)
     }
     
     func toggleBookmark(card: WPACreditCardDTO) {

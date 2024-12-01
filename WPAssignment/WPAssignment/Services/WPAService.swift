@@ -6,32 +6,35 @@
 //
 
 import Foundation
+import Combine
 
 class WPAService {
-    func fetchData<T: Decodable>(from urlString: String, completion: @escaping (Result<T, Error>) -> Void) {
-        guard let url = URL(string: urlString) else {
-            completion(.failure(APIError.invalidURL))
-            return
+    func fetchData<T: Decodable>(from urlString: String) -> Future<T, Error> {
+        return Future { promise in
+            guard let url = URL(string: urlString) else {
+                promise(.failure(APIError.invalidURL))
+                return
+            }
+            
+            URLSession.shared.dataTask(with: url) { data, response, error in
+                if let error = error {
+                    promise(.failure(error))
+                    return
+                }
+                
+                guard let data = data else {
+                    promise(.failure(APIError.noData))
+                    return
+                }
+                
+                do {
+                    let decodedData = try JSONDecoder().decode(T.self, from: data)
+                    promise(.success(decodedData))
+                } catch {
+                    promise(.failure(APIError.decodingError))
+                }
+            }.resume()
         }
-        
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            guard let data = data else {
-                completion(.failure(APIError.noData))
-                return
-            }
-            
-            do {
-                let decodedData = try JSONDecoder().decode(T.self, from: data)
-                completion(.success(decodedData))
-            } catch {
-                completion(.failure(APIError.decodingError))
-            }
-        }.resume()
     }
 }
 
