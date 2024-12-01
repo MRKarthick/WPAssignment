@@ -26,10 +26,13 @@ struct WPABookmarksView: View {
     @ViewBuilder
     private var contentView: some View {
         if viewModel.groupedBookmarks.isEmpty {
+            // Show a default view when there are no bookmarks
             WPADefaultContentView(content: WPAGenericConstants.BookmarksPage.kEmptyBookmarksDescription)
         } else if let errorMessage = viewModel.errorMessage {
+            // Show an error view if there's an error message
             WPAErrorView(errorMessage: "\(WPAErrorConstants.kGenericErrorTitle): \(errorMessage)")
         } else {
+            // Display a list of bookmarks grouped by type
             List {
                 ForEach(viewModel.groupedBookmarks, id: \.0) { type, cards in
                     Section(header: Text(type)) {
@@ -43,6 +46,7 @@ struct WPABookmarksView: View {
     }
 }
 
+// Preview provider for SwiftUI previews
 #Preview {
     WPABookmarksView()
 }
