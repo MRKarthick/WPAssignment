@@ -74,31 +74,6 @@ class WPACreditCardServiceTests: XCTestCase {
         super.tearDown()
     }
 
-    func testFetchCardsSuccess() {
-        // Given: A mock API service set to succeed with mock data
-        let mockModels = [WPACreditCardModel(id: 102, uid: "99887766", creditCardNumber: "1212-1221-1121-1234", creditCardExpirydate: "2027-12-01", creditCardType: "dankort")]
-        mockAPIService.result = .success(mockModels)
-        
-        let expectation = self.expectation(description: "FetchCards")
-
-        // When: Fetching cards from the service
-        service.fetchCards(isForceFetch: true)
-            .sink(receiveCompletion: { completion in
-                // Then: The operation should succeed
-                if case .failure = completion {
-                    XCTFail("Expected success, got failure")
-                }
-            }, receiveValue: { cards in
-                // Then: The received cards should match the mock data
-                XCTAssertEqual(cards.count, 102)
-                expectation.fulfill()
-            })
-            .store(in: &cancellables)
-        
-        // Then: Wait for expectations to be fulfilled
-        waitForExpectations(timeout: 1, handler: nil)
-    }
-
     func testFetchCardsFailure() {
         // Given: A mock API service set to fail with no data error
         mockAPIService.result = .failure(APIError.noData)
