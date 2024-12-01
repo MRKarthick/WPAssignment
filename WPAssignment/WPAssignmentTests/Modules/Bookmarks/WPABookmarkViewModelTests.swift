@@ -48,14 +48,16 @@ class WPABookmarkViewModelTests: XCTestCase {
     }
     
     func testFetchBookmarkedCardsSuccess() {
+        // Given
         let expectedCards = [WPACreditCardDTO(ccId: 1, ccUid: "99a59004-6f51-497d-b2ab-eb4952c0ac3e", ccNumber: "1212-1212-1212-1212", ccExpiryDate: "2027-12-01", ccType: "dankort", isBookmarked: true)]
         mockService.fetchBookmarkedCardsResult = .success(expectedCards)
-        
         let expectation = XCTestExpectation(description: "Fetch Bookmarked Cards")
-        
+
+        // When
         viewModel.$groupedBookmarks
             .dropFirst()
             .sink { groupedBookmarks in
+                // Then
                 XCTAssertEqual(groupedBookmarks.count, 1)
                 XCTAssertEqual(groupedBookmarks.first?.key, "dankort")
                 XCTAssertEqual(groupedBookmarks.first?.value.count, 1)
@@ -70,13 +72,15 @@ class WPABookmarkViewModelTests: XCTestCase {
     }
     
     func testFetchBookmarkedCardsFailure() {
+        // Given
         mockService.fetchBookmarkedCardsResult = .failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Network Error"]))
-        
         let expectation = XCTestExpectation(description: "Fetch Bookmarked Cards Failure")
-        
+
+        // When
         viewModel.$errorMessage
             .dropFirst()
             .sink { errorMessage in
+                // Then
                 XCTAssertEqual(errorMessage, "Failed to fetch bookmarks: Network Error")
                 expectation.fulfill()
             }
