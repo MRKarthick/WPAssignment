@@ -25,17 +25,20 @@ class WPACreditCardService {
         }
     }
     
-    func fetchBookmarkedCards(completion: @escaping (Result<[WPACreditCardDTO], Error>) -> Void) {
-        Task { @MainActor in
-            let result = WPACreditCardPersistence.shared.fetchBookmarkedCreditCards()
-            switch result {
-            case .success(let creditCards):
-                let modelDTOs = creditCards.map { WPACreditCardDTO.getDTOfrom($0) }
-                completion(.success(modelDTOs))
-            case .failure(let error):
-                completion(.failure(error))
+    func fetchBookmarkedCards() -> AnyPublisher<[WPACreditCardDTO], Error> {
+        Future { promise in
+            Task { @MainActor in
+                let result = WPACreditCardPersistence.shared.fetchBookmarkedCreditCards()
+                switch result {
+                case .success(let creditCards):
+                    let modelDTOs = creditCards.map { WPACreditCardDTO.getDTOfrom($0) }
+                    promise(.success(modelDTOs))
+                case .failure(let error):
+                    promise(.failure(error))
+                }
             }
         }
+        .eraseToAnyPublisher()
     }
     
     func fetchCards(isForceFetch: Bool = false) -> AnyPublisher<[WPACreditCardDTO], Error> {
