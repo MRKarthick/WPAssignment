@@ -64,3 +64,18 @@ enum APIError: Error {
     case decodingError
     case noInternetConnection
 }
+
+extension APIError: LocalizedError {
+    var errorDescription: String? {
+        switch self {
+        case .invalidURL:
+            return NSLocalizedString("The URL provided was invalid.", comment: "Invalid URL")
+        case .noData:
+            return NSLocalizedString("No data was received from the server.", comment: "No Data")
+        case .decodingError:
+            return NSLocalizedString("There was an error decoding the data.", comment: "Decoding Error")
+        case .noInternetConnection:
+            return NSLocalizedString("No internet connection is available.", comment: "No Internet Connection")
+        }
+    }
+}

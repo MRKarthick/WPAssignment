@@ -33,7 +33,7 @@ class WPACreditCardViewModel: ObservableObject {
             .sink(receiveCompletion: { [weak self] completion in
                 self?.isLoading = false
                 if case .failure(let error) = completion {
-                    self?.errorMessage = "\(WPAErrorConstants.kFailedCreditCardsErrorTitle): \(error)"
+                    self?.errorMessage = "\(WPAErrorConstants.kFailedCreditCardsErrorTitle): \(error.localizedDescription)"
                 }
             }, receiveValue: { [weak self] fetchedCards in
                 // Group fetched cards by type and sort them
