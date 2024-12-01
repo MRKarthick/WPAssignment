@@ -107,12 +107,10 @@ class WPACreditCardService: WPACreditCardServiceProtocol {
             }
         }
         
-        for model in models {
-            let entity = WPACreditCardEntity.getDTOfrom(model)
-            let result = persistence.saveCard(entity)
-            if case .failure(let error) = result {
-                debugPrint("Failed to save credit card: \(error)")
-            }
+        let entities = models.map { WPACreditCardEntity.getDTOfrom($0) }
+        let result = persistence.saveCards(entities)
+        if case .failure(let error) = result {
+            debugPrint("Failed to save credit cards: \(error)")
         }
     }
 }

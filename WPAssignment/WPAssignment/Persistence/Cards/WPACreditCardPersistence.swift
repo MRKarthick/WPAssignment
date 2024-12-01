@@ -41,6 +41,7 @@ protocol WPACreditCardPersistenceProtocol {
     func deleteAllCreditCards(excludingBookmarks: Bool) -> Result<Void, WPACreditCardPersistenceError>
     func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) -> Result<Void, WPACreditCardPersistenceError>
     func fetchBookmarkedCreditCards() -> Result<[WPACreditCardEntity], WPACreditCardPersistenceError>
+    func saveCards(_ creditCards: [WPACreditCardEntity]) -> Result<Void, WPACreditCardPersistenceError>
 }
 
 // Class implementing the persistence protocol, handling credit card data storage
@@ -147,6 +148,19 @@ class WPACreditCardPersistence: @preconcurrency WPACreditCardPersistenceProtocol
             return FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { !$0.isBookmarked })
         } else {
             return FetchDescriptor<WPACreditCardEntity>()
+        }
+    }
+    
+    @MainActor func saveCards(_ creditCards: [WPACreditCardEntity]) -> Result<Void, WPACreditCardPersistenceError> {
+        let context = modelContainer.mainContext
+        creditCards.forEach { context.insert($0) }
+        
+        do {
+            try context.save()
+            return .success(())
+        } catch {
+            debugPrint("WPACreditCardPersistence: Failed to save credit cards: \(error)")
+            return .failure(.saveFailed(error))
         }
     }
 }
