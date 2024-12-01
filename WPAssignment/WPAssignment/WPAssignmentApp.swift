@@ -12,7 +12,7 @@ import SwiftData
 struct WPAssignmentApp: App {
     var body: some Scene {
         WindowGroup {
-            WPACardListView()
+            WPADashboardView()
         }
     }
 }
