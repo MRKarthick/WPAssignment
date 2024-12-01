@@ -12,7 +12,9 @@ class WPACreditCardService {
     static let kCreditCardsURL: String = "\(WPAURLConstants.kRandomAPIV2URL)/credit_cards"
     
     static let shared = WPACreditCardService()
+    
     private let apiService = WPAService()
+    private var cancellables = Set<AnyCancellable>()
     
     // Currently there is no API to persist bookmark in Backend. So the service layer here just persists in SQLite DB
     func updateBookmark(forCardWithCcUid ccUid: String, withValue isBookmarked: Bool) {
@@ -78,8 +80,6 @@ class WPACreditCardService {
             WPACreditCardPersistence.shared.saveCard(entity)
         }
     }
-    
-    private var cancellables = Set<AnyCancellable>()
 }
 
 
