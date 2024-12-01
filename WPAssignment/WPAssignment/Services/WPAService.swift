@@ -34,7 +34,11 @@ class WPAService: WPAAPIServiceProtocol {
             
             self.session.dataTask(with: url) { data, response, error in
                 if let error = error {
-                    promise(.failure(error))
+                    if (error as? URLError)?.code == .notConnectedToInternet {
+                        promise(.failure(APIError.noInternetConnection))
+                    } else {
+                        promise(.failure(error))
+                    }
                     return
                 }
                 
@@ -58,4 +62,5 @@ enum APIError: Error {
     case invalidURL
     case noData
     case decodingError
+    case noInternetConnection
 }

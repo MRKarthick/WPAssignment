@@ -9,4 +9,5 @@ import Foundation
 
 struct WPAErrorConstants {
     static let kGenericErrorTitle: String = "Please try again in sometime"
+    static let kFailedCreditCardsErrorTitle: String = "Failed to fetch cards"
 }

@@ -12,7 +12,7 @@ struct WPAErrorView: View {
     let errorMessage: String
 
     var body: some View {
-        Text("\(WPAErrorConstants.kGenericErrorTitle): \(errorMessage)")
+        Text("\(WPAErrorConstants.kGenericErrorTitle), \(errorMessage)")
             .multilineTextAlignment(.center)
             .padding()
     }

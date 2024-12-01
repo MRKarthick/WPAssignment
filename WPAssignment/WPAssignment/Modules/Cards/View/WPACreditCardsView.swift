@@ -22,7 +22,7 @@ struct WPACreditCardsView: View {
     // ViewBuilder to conditionally build the content view
     @ViewBuilder
     private var contentView: some View {
-        if viewModel.groupedCards.isEmpty {
+        if viewModel.isLoading {
             // Show a loading view if cards are being fetched
             WPAProgressView(message: WPAGenericConstants.kLoadingPlaceholderDescription)
         } else if viewModel.errorMessage != nil {
