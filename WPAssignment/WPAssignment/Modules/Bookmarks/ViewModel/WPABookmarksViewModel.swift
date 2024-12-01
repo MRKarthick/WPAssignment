@@ -30,6 +30,7 @@ class WPABookmarksViewModel: ObservableObject {
                     self?.errorMessage = "Failed to fetch bookmarks: \(error.localizedDescription)"
                 }
             }, receiveValue: { [weak self] fetchedCards in
+                self?.errorMessage = nil
                 // Process and store the fetched cards
                 self?.groupedBookmarks = self?.groupAndSortBookmarks(fetchedCards) ?? []
             })
