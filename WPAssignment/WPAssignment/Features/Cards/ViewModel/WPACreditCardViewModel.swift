@@ -31,7 +31,6 @@ class WPACreditCardViewModel: ObservableObject {
     }
     
     func bookmark(card: WPACreditCardDTO) {
-        // card.isBookmarked.toggle()
-        // modelContext.saveIfNeeded()
+        WPACreditCardService.shared.bookmarkCreditCard(ccUid: card.ccUid)
     }
 }

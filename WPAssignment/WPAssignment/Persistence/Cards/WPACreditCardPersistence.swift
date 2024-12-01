@@ -51,7 +51,13 @@ class WPACreditCardPersistence {
     @MainActor func deleteAllCreditCards(excludingBookmarks: Bool = true) {
         let context = modelContainer.mainContext
         
-        let fetchRequest = FetchDescriptor<WPACreditCardEntity>()
+        // Update the fetch request to exclude bookmarked credit cards
+        let fetchRequest: FetchDescriptor<WPACreditCardEntity>
+        if excludingBookmarks {
+            fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { !$0.isBookmarked })
+        } else {
+            fetchRequest = FetchDescriptor<WPACreditCardEntity>()
+        }
         
         do {
             let creditCards = try context.fetch(fetchRequest)
@@ -61,18 +67,35 @@ class WPACreditCardPersistence {
             debugPrint("WPACreditCardPersistence: Failed to delete all credit cards: \(error)")
         }
     }
-
-    @MainActor func fetchCreditCard(byUid ccUid: String) -> WPACreditCardEntity? {
+    
+    @MainActor func bookmarkCreditCard(with ccUid: String) {
         let context = modelContainer.mainContext
         
         let fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { $0.ccUid == ccUid })
         
         do {
-            let creditCards = try context.fetch(fetchRequest)
-            return creditCards.first
+            if let creditCard = try context.fetch(fetchRequest).first {
+                creditCard.isBookmarked = true
+                try context.save()
+            } else {
+                debugPrint("WPACreditCardPersistence: No credit card found with ccUid: \(ccUid)")
+            }
         } catch {
-            debugPrint("WPACreditCardPersistence: Failed to fetch credit card with UID \(ccUid): \(error)")
-            return nil
+            debugPrint("WPACreditCardPersistence: Failed to bookmark credit card: \(error)")
+        }
+    }
+    
+    @MainActor func fetchBookmarkedCreditCards() -> [WPACreditCardEntity] {
+        let context = modelContainer.mainContext
+        
+        let fetchRequest = FetchDescriptor<WPACreditCardEntity>(predicate: #Predicate { $0.isBookmarked })
+        
+        do {
+            let bookmarkedCreditCards = try context.fetch(fetchRequest)
+            return bookmarkedCreditCards
+        } catch {
+            debugPrint("WPACreditCardPersistence: Failed to fetch Bookmarked credit cards: \(error)")
+            return []
         }
     }
 }

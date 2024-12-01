@@ -24,7 +24,9 @@ struct WPACardListView: View {
                             ForEach(viewModel.groupedCards, id: \.0) { type, cards in
                                 Section(header: Text(type)) {
                                     ForEach(cards) { card in
-                                        WPACardItemView(card: card)
+                                        WPACardItemView(card: card) {
+                                            viewModel.bookmark(card: card)
+                                        }
                                     }
                                 }
                             }

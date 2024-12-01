@@ -28,7 +28,9 @@ final class WPACreditCardDTO: Identifiable {
     }
     
     class func getDTOfrom(_ entity: WPACreditCardEntity) -> WPACreditCardDTO {
-        return WPACreditCardDTO(ccId: entity.id, ccUid: entity.ccUid, ccNumber: entity.ccNumber, ccExpiryDate: entity.ccExpiryDate, ccType: entity.ccType)
+        let ccDto = WPACreditCardDTO(ccId: entity.id, ccUid: entity.ccUid, ccNumber: entity.ccNumber, ccExpiryDate: entity.ccExpiryDate, ccType: entity.ccType)
+        ccDto.isBookmarked = entity.isBookmarked
+        return ccDto
     }
 }
 
