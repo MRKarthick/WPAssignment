@@ -34,16 +34,20 @@ struct WPACreditCardsView: View {
                 ForEach(viewModel.groupedCards, id: \.0) { type, cards in
                     Section(header: Text(type)) {
                         ForEach(cards) { card in
-                            // Display each card with a bookmark toggle action
-                            WPACardItemView(card: card) {
-                                viewModel.toggleBookmark(card: card)
-                            }
+                            // Use a binding to the card's isBookmarked property
+                            WPACardItemView(card: card, isBookmarked: Binding(
+                                get: { card.isBookmarked },
+                                set: { newValue in
+                                    viewModel.toggleBookmark(card: card)
+                                }
+                            ), showBookmarks: true)
                         }
                     }
                 }
             }
             .refreshable {
-                // Allow the user to refresh the list of cards
+                // Allow the user to refresh the list of cards.
+                // This will allow for easy debugging to see if the new data is fetched. UnComment it out if needed.
                 viewModel.fetchCards(isForceFetch: true)
             }
         }

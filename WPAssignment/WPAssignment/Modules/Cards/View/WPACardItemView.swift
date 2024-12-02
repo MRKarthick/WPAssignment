@@ -9,15 +9,14 @@ import Foundation
 import SwiftUI
 
 struct WPACardItemView: View {
-    @State private var card: WPACreditCardDTO
-    @State private var isBookmarked: Bool
-    // Optional closure to handle bookmark toggle action
-    var onBookmarkToggle: (() -> Void)?
+    @Binding var isBookmarked: Bool
+    var card: WPACreditCardDTO
+    var showBookmarks: Bool?
     
-    init(card: WPACreditCardDTO, onBookmarkToggle: (() -> Void)? = nil) {
+    init(card: WPACreditCardDTO, isBookmarked: Binding<Bool> = .constant(false), showBookmarks: Bool? = nil) {
         self.card = card
-        self.isBookmarked = card.isBookmarked
-        self.onBookmarkToggle = onBookmarkToggle
+        self._isBookmarked = isBookmarked
+        self.showBookmarks = showBookmarks
     }
     
     var body: some View {
@@ -26,13 +25,11 @@ struct WPACardItemView: View {
                 Text("\(WPAGenericConstants.CreditCardItem.kCreditCardNumberTitle):  \(card.ccNumber)")
                 Text("\(WPAGenericConstants.CreditCardItem.kCreditCardExpiryTitle): \(card.ccExpiryDate)")
             }
-            // If a bookmark toggle handler is provided, show a bookmark button
-            if let onBookmarkToggle = onBookmarkToggle {
+            if showBookmarks ?? false {
                 Spacer()
                 Button(action: {
                     // Toggle bookmark status and call the handler
                     isBookmarked.toggle()
-                    onBookmarkToggle()
                 }) {
                     // Display bookmark icon based on bookmark status
                     Image(systemName: getBookmarkImageName())

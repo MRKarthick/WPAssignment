@@ -14,9 +14,9 @@ class WPACreditCardViewModel: ObservableObject {
     
     @Published var isLoading: Bool = false
     @Published var groupedCards: [(key: String, value: [WPACreditCardDTO])] = []
-    @Published var cardsDto: [WPACreditCardDTO] = []
     @Published var errorMessage: String? = nil
     
+    var cardsDto: [WPACreditCardDTO] = []
     private var cancellables = Set<AnyCancellable>()
     private let cardService: WPACreditCardServiceProtocol
     
@@ -37,6 +37,7 @@ class WPACreditCardViewModel: ObservableObject {
                 }
             }, receiveValue: { [weak self] fetchedCards in
                 // Use the static method for grouping and sorting
+                self?.cardsDto = fetchedCards
                 self?.groupedCards = WPACreditCardDTO.groupAndSortCreditCards(fetchedCards)
                 self?.errorMessage = nil
             })
@@ -45,6 +46,15 @@ class WPACreditCardViewModel: ObservableObject {
     
     // Toggles the bookmark status of a card
     func toggleBookmark(card: WPACreditCardDTO) {
+        // Update the bookmark status in the service
         cardService.updateBookmark(forCardWithCcUid: card.ccUid, withValue: !card.isBookmarked)
+        
+        // Update the local card's bookmark status
+        if let index = cardsDto.firstIndex(where: { $0.ccUid == card.ccUid }) {
+            cardsDto[index].isBookmarked.toggle()
+            
+            // Reflect changes in groupedCards
+            groupedCards = WPACreditCardDTO.groupAndSortCreditCards(cardsDto)
+        }
     }
 }

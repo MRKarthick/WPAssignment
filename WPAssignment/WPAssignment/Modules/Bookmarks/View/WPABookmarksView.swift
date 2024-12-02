@@ -37,7 +37,7 @@ struct WPABookmarksView: View {
                 ForEach(viewModel.groupedBookmarks, id: \.0) { type, cards in
                     Section(header: Text(type)) {
                         ForEach(cards) { card in
-                            WPACardItemView(card: card)
+                            WPACardItemView(card: card, showBookmarks: false)
                         }
                     }
                 }
