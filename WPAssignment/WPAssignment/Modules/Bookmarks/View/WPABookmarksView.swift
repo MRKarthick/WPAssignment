@@ -37,6 +37,7 @@ struct WPABookmarksView: View {
                 ForEach(viewModel.groupedBookmarks, id: \.0) { type, cards in
                     Section(header: Text(type)) {
                         ForEach(cards) { card in
+                            // Bookmarks page doesnt need to show the option to toggle.
                             WPACardItemView(card: card, showBookmarks: false)
                         }
                     }
