@@ -88,14 +88,49 @@ class WPACreditCardViewModelTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
     
-    func testToggleBookmark() {
+    func testToggleBookmarkForUnbookmarkedCard() {
         // Given
-        let card = WPACreditCardDTO(ccId: 1, ccUid: "99a59004-6f51-497d-b2ab-eb4952c0ac3e", ccNumber: "1212-1212-1212-1212", ccExpiryDate: "2027-12-01", ccType: "dankort")
+        let card = WPACreditCardDTO(ccId: 1, ccUid: "99a59004-6f51-497d-b2ab-eb4952c0ac3e", ccNumber: "1212-1212-1212-1212", ccExpiryDate: "2027-12-01", ccType: "dankort", isBookmarked: false)
+        viewModel.cardsDto = [card]
+        viewModel.groupedCards = WPACreditCardDTO.groupAndSortCreditCards([card])
         
         // When
         viewModel.toggleBookmark(card: card)
         
         // Then
         XCTAssertTrue(mockService.updateBookmarkCalled)
+        XCTAssertTrue(viewModel.cardsDto.first?.isBookmarked ?? false)
+        XCTAssertEqual(viewModel.groupedCards.first?.value.first?.isBookmarked, true)
+    }
+    
+    func testToggleBookmarkForBookmarkedCard() {
+        // Given
+        let card = WPACreditCardDTO(ccId: 1, ccUid: "99a59004-6f51-497d-b2ab-eb4952c0ac3e", ccNumber: "1212-1212-1212-1212", ccExpiryDate: "2027-12-01", ccType: "dankort", isBookmarked: true)
+        viewModel.cardsDto = [card]
+        viewModel.groupedCards = WPACreditCardDTO.groupAndSortCreditCards([card])
+        
+        // When
+        viewModel.toggleBookmark(card: card)
+        
+        // Then
+        XCTAssertTrue(mockService.updateBookmarkCalled)
+        XCTAssertFalse(viewModel.cardsDto.first?.isBookmarked ?? true)
+        XCTAssertEqual(viewModel.groupedCards.first?.value.first?.isBookmarked, false)
+    }
+    
+    func testToggleBookmarkUpdatesGroupedCards() {
+        // Given
+        let card1 = WPACreditCardDTO(ccId: 1, ccUid: "99a59004-6f51-497d-b2ab-eb4952c0ac3e", ccNumber: "1212-1212-1212-1212", ccExpiryDate: "2027-12-01", ccType: "dankort", isBookmarked: false)
+        let card2 = WPACreditCardDTO(ccId: 2, ccUid: "88b59004-6f51-497d-b2ab-eb4952c0ac3e", ccNumber: "3434-3434-3434-3434", ccExpiryDate: "2028-12-01", ccType: "visa", isBookmarked: true)
+        viewModel.cardsDto = [card1, card2]
+        viewModel.groupedCards = WPACreditCardDTO.groupAndSortCreditCards([card1, card2])
+        
+        // When
+        viewModel.toggleBookmark(card: card1)
+        
+        // Then
+        XCTAssertTrue(viewModel.cardsDto.first?.isBookmarked ?? false)
+        XCTAssertEqual(viewModel.groupedCards.count, 2)
+        XCTAssertEqual(viewModel.groupedCards.first(where: { $0.key == "dankort" })?.value.first?.isBookmarked, true)
     }
 }
